@@ -45,6 +45,8 @@ public class Player : MonoBehaviour
      
     }
 
+    //teste
+
     public void AlterarSaldoConta()
     {
         saldocontav.text = "$"+patrimonio.ToString();
