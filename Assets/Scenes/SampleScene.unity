@@ -1933,7 +1933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28d8af2553c9199468ee7d4805c14c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModuloTempo
-  semana: 0
+  semana: 2
   semanav: {fileID: 1038539884}
 --- !u!4 &1967107435
 Transform:
