@@ -23,25 +23,23 @@ public class Player : MonoBehaviour
         {"saube",0},
         {"laz",0}
     };
-    //a "stamina" do jogador
-    public static int disposicao = 100;
+
     //total na conta do jogador
     public float patrimonio = 0;
     public TextMeshProUGUI saldocontav;
-    public TextMeshProUGUI disposicaov;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         AlterarSaldoConta();
-        AlterarDisposicao();
+       // AlterarDisposicao();
     }
 
     // Update is called once per frame
     void Update()
     {
         AlterarSaldoConta();
-        AlterarDisposicao();
      
     }
 
@@ -52,8 +50,5 @@ public class Player : MonoBehaviour
         saldocontav.text = "$"+patrimonio.ToString();
     }
 
-    public void AlterarDisposicao()
-    {
-        disposicaov.text =  disposicao.ToString()+ "%";
-    }
+ 
 }
