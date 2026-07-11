@@ -19,6 +19,7 @@ public class ModuloDisposicao : MonoBehaviour
     {
         //adiciona RecuperarDisposição a is Esgotado
         isEsgotado += RecuperarDisposicao;
+        ModuloTempo.isSemanaAvancada += RecuperarDisposicao;
     }
 
     //quando o evento acaba vulgo desativado
@@ -26,6 +27,8 @@ public class ModuloDisposicao : MonoBehaviour
     {
         //remove RecuperarDisposicao da fila is Esgotado
         isEsgotado -= RecuperarDisposicao;
+        ModuloTempo.isSemanaAvancada -= RecuperarDisposicao;
+
     }
 
     void Start()
