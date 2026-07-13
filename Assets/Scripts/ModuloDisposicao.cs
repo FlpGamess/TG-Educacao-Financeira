@@ -17,16 +17,15 @@ public class ModuloDisposicao : MonoBehaviour
     //quando o evento for ativado
     private void OnEnable()
     {
-        //adiciona RecuperarDisposição a is Esgotado
-        isEsgotado += RecuperarDisposicao;
+        //adiciona RecuperarDisposição a isSemanaAvancada
         ModuloTempo.isSemanaAvancada += RecuperarDisposicao;
     }
 
     //quando o evento acaba vulgo desativado
     private void OnDisable()
     {
-        //remove RecuperarDisposicao da fila is Esgotado
-        isEsgotado -= RecuperarDisposicao;
+        //remove RecuperarDisposicao da fila is isSemanaAvancada
+
         ModuloTempo.isSemanaAvancada -= RecuperarDisposicao;
 
     }
@@ -45,12 +44,13 @@ public class ModuloDisposicao : MonoBehaviour
     }
 
     //função que calcula a disposição do personagem 
-    //caso ela seja menor ou igual que -30 chama o evento isEsgotado
+    //para adicionar use numero positivo e para remover negativos
     public void CalcularDisposicao(int newD)
     {
+        //calcula a disposição
         disposicao = disposicao + newD;
-
-        if(disposicao <= -30)
+        //caso a disposição seja menor ou igual que -30 chama o evento isEsgotado
+        if (disposicao <= -30)
         {
             Debug.Log("Bobbie goods");
             isEsgotado?.Invoke();

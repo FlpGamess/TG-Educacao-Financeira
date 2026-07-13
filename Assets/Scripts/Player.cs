@@ -33,7 +33,6 @@ public class Player : MonoBehaviour
     void Start()
     {
         AlterarSaldoConta();
-       // AlterarDisposicao();
     }
 
     // Update is called once per frame
