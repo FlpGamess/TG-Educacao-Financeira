@@ -10,12 +10,12 @@ public class Player : MonoBehaviour
 {
     //guarda os atributos financeiros do player
     /*despesas do lar = desplar
-      educação = educ
+      educacao = educ
       moradia = morad
       saude_bem_estar = saube
       lazer = laz
      */
-    IDictionary<string,int> AtbFinanceiros = new Dictionary<string,int>()
+    IDictionary<string, int> AtbFinanceiros = new Dictionary<string, int>()
     {
         {"desplar",0},
         {"educ",0},
@@ -27,27 +27,29 @@ public class Player : MonoBehaviour
     //total na conta do jogador
     public float patrimonio = 0;
     public TextMeshProUGUI saldocontav;
-    
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public ModuloTempo moduloTempo;
+
     void Start()
     {
+        patrimonio = 1621.00f;
         AlterarSaldoConta();
+        ModuloTempo.isSemanaAvancada += AtualizarPatrimonio;
     }
 
-    // Update is called once per frame
-    void Update()
+    void AtualizarPatrimonio()
     {
-        AlterarSaldoConta();
-     
+        if (ModuloTempo.semana > 1 && (ModuloTempo.semana - 1) % 4 == 0)
+        {
+            patrimonio += 1621.00f;
+            AlterarSaldoConta();
+        }
     }
-
-    //teste
 
     public void AlterarSaldoConta()
     {
-        saldocontav.text = "$"+patrimonio.ToString();
+        saldocontav.text = "$" + patrimonio.ToString();
     }
 
- 
+
 }
