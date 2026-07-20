@@ -8,7 +8,7 @@ public class ModuloInterface : MonoBehaviour
     GameObject menuCelular;
     //Lista que guarda todas as janelas que tão abertas
     List<GameObject> janelasAbertas = new List<GameObject>();
-
+    public ModuloLoja moduloloja;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,6 +32,7 @@ public class ModuloInterface : MonoBehaviour
             janelasAbertas.Insert(0,janela);
             //ative a janela no indice 0 de janelasAbertas
             janelasAbertas[0].SetActive(true);
+            CarregarCompoJanela(janela.name);
         }
     }
     //descobrir o indice de uma janela
@@ -52,7 +53,20 @@ public class ModuloInterface : MonoBehaviour
             janelasAbertas[indice].SetActive(false);
             //remova a janela na posição encontrada da lista 
             janelasAbertas.RemoveAt(indice);
+            CarregarCompoJanela(janela.name);
         }
+    }
+
+    public void CarregarCompoJanela(string jname)
+    {
+        switch (jname)
+        {
+            case "MenuLoja":
+                Debug.Log("teste"+jname);
+                moduloloja.CarregarLoja();
+                break;
+        }
+
     }
 
     public void FuncaoProvisoriaVouApagarDpsHomenagemACaioPrime()
