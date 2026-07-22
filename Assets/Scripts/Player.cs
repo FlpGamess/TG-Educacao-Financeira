@@ -15,13 +15,13 @@ public class Player : MonoBehaviour
       saude_bem_estar = saube
       lazer = laz
      */
-    public static IDictionary<string, int> AtbFinanceiros = new Dictionary<string, int>()
+    public static IDictionary<AtributosFinanceiros, int> AtbFinanceiros = new Dictionary<AtributosFinanceiros, int>()
     {
-        {"desplar",0},
-        {"educ",0},
-        {"morad",0},
-        {"saube",0},
-        {"laz",0}
+        {AtributosFinanceiros.DespesasDoLar,0},
+        {AtributosFinanceiros.Moradia,0},
+        {AtributosFinanceiros.Lazer,0},
+        {AtributosFinanceiros.SaudeBemEstar,0},
+        {AtributosFinanceiros.Educacao,0}
     };
 
     //total na conta do jogador
