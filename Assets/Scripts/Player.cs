@@ -16,8 +16,7 @@ public class Player : MonoBehaviour
       saude_bem_estar = saube
       lazer = laz
      */
-
-    public IDictionary<string, int> AtbFinanceiros = new Dictionary<string, int>()
+    public static IDictionary<string, int> AtbFinanceiros = new Dictionary<string, int>()
     {
         {"AtbFinanceiros.desplar",0},
         {"AtbFinanceiros.educ",0},
