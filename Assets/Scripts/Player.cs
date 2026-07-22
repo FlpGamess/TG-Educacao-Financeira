@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 //Script do player
 //Responsavel pelos atributos do player financeiros
@@ -15,14 +16,35 @@ public class Player : MonoBehaviour
       saude_bem_estar = saube
       lazer = laz
      */
-    IDictionary<string, int> AtbFinanceiros = new Dictionary<string, int>()
+
+    public IDictionary<string, int> AtbFinanceiros = new Dictionary<string, int>()
     {
-        {"desplar",0},
-        {"educ",0},
-        {"morad",0},
-        {"saube",0},
-        {"laz",0}
+        {"AtbFinanceiros.desplar",0},
+        {"AtbFinanceiros.educ",0},
+        {"AtbFinanceiros.morad",0},
+        {"AtbFinanceiros.saube",0},
+        {"AtbFinanceiros.laz",0}
     };
+
+    public int desplar;
+    public int educ;
+    public int morad;
+    public int saube;
+    public int laz;
+
+    public Image slot1;
+    public Image slot2;
+    public Image slot3;
+    public Image slot4;
+    public Image slot5;
+
+    public Sprite spriteDesplar;
+    public Sprite spriteEduc;
+    public Sprite spriteMorad;
+    public Sprite spriteSaube;
+    public Sprite spriteLaz;
+
+
 
     //total na conta do jogador
     public float patrimonio = 0;
@@ -35,6 +57,12 @@ public class Player : MonoBehaviour
         patrimonio = 1621.00f;
         AlterarSaldoConta();
         ModuloTempo.isSemanaAvancada += AtualizarPatrimonio;
+
+        slot1.sprite = spriteDesplar;
+        slot2.sprite = spriteEduc;
+        slot3.sprite = spriteMorad;
+        slot4.sprite = spriteSaube;
+        slot5.sprite = spriteLaz;
     }
 
     void AtualizarPatrimonio()
