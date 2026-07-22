@@ -6,13 +6,13 @@ public class ModuloInterface : MonoBehaviour
     //recebe o objeto pai da interface(primeiro painel)
     public GameObject Interface;
     GameObject menuCelular;
-    //Lista que guarda todas as janelas que tão abertas
+    //Lista que guarda todas as janelas que tï¿½o abertas
     List<GameObject> janelasAbertas = new List<GameObject>();
     public ModuloLoja moduloloja;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-    //define menuCelular como o menu do MenuCelular sendo o menu padrão
+    //define menuCelular como o menu do MenuCelular sendo o menu padrï¿½o
      menuCelular = Interface.transform.Find("MenuCelular").gameObject;
 
     }
@@ -23,10 +23,10 @@ public class ModuloInterface : MonoBehaviour
         
     }
 
-    //Função para abrir janelas do Menu, recebe o obj da janela que quer abrir
+    //Funï¿½ï¿½o para abrir janelas do Menu, recebe o obj da janela que quer abrir
     public void Ativarjanela(GameObject janela)
     {
-        //se a janela não esta na lista de janelas abertas
+        //se a janela nï¿½o esta na lista de janelas abertas
         if(!janelasAbertas.Contains(janela)) {
             //adiciona janela em janelasAbertas no indice 0
             janelasAbertas.Insert(0,janela);
@@ -41,7 +41,7 @@ public class ModuloInterface : MonoBehaviour
     //remover por indice
     //janelasAbertas.removeAt(numero);
 
-    //Função para ocultar janelas, recebe a janela a ser ocultada(fechada)
+    //Funï¿½ï¿½o para ocultar janelas, recebe a janela a ser ocultada(fechada)
     public void OcultarJanela(GameObject janela)
     {
         if (Input.GetKey(KeyCode.LeftShift))
@@ -56,11 +56,11 @@ public class ModuloInterface : MonoBehaviour
         //se a janela estiver presente na lista janelasAbertas
         if (janelasAbertas.Contains(janela))
         {
-            //ache a posição dessa janela na lista
+            //ache a posiï¿½ï¿½o dessa janela na lista
             int indice = janelasAbertas.IndexOf(janela);
-            //desative a janela na posição encontrada
+            //desative a janela na posiï¿½ï¿½o encontrada
             janelasAbertas[indice].SetActive(false);
-            //remova a janela na posição encontrada da lista 
+            //remova a janela na posiï¿½ï¿½o encontrada da lista 
             janelasAbertas.RemoveAt(indice);
             CarregarCompoJanela(janela.name);
         }
