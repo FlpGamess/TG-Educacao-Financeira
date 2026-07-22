@@ -44,6 +44,15 @@ public class ModuloInterface : MonoBehaviour
     //Função para ocultar janelas, recebe a janela a ser ocultada(fechada)
     public void OcultarJanela(GameObject janela)
     {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            foreach(GameObject jnl in janelasAbertas)
+            {
+                jnl.SetActive(false);
+            }
+            janelasAbertas.Clear();
+            return;
+        }
         //se a janela estiver presente na lista janelasAbertas
         if (janelasAbertas.Contains(janela))
         {
