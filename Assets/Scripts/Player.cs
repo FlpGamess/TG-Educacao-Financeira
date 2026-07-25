@@ -3,7 +3,7 @@ using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+//
 //Script do player
 //Responsavel pelos atributos do player financeiros
 //Stamina, entre outros referentes a ele
