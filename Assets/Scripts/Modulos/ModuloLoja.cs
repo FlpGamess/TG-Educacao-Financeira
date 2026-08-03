@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -15,17 +16,28 @@ public class ModuloLoja : MonoBehaviour
     public GameObject prefabBotao;
     //componente das celulas dos itens da loja que ficarão em lista
     public CelulaItemLoja prefabItens;
+
+    public GameObject painelInterfaceCompra;
+
+    public CedulaCompra prefabCelulaCompra;
     //containers vulgo lugares onde vão ficar cada coisa
     public Transform ContainerBotoes;
     public Transform ContainerItens;
 
     public AtributosFinanceiros CategoriaAtual;
+    public Itens ItemSelecionado;  
     public CatalogoLoja catalogo;
+
+    public Toggle toggle;
+    List<Toggle> togglesPagamento = new List<Toggle>();
 
     //lista dos botões da loja
     List<GameObject> botoes = new List<GameObject>();
     //lista dos itens da loja
     List<CelulaItemLoja> itens = new List<CelulaItemLoja>();
+    public Player player;
+    public ModuloInterface ModuloInterface;
+
 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -62,13 +74,63 @@ public class ModuloLoja : MonoBehaviour
         catalogo.CarregarCatalogo();
         foreach (Itens item in catalogo.catalogo[CategoriaAtual])
         {
-           // Debug.Log(item);
+            // Debug.Log(item);
             //cria a celula do item a venda na loja, futuramente com os itens sera mudado pra um for each
             CelulaItemLoja cedulaItem = Instantiate(prefabItens, ContainerItens);
-            cedulaItem = HelperConfig.ConfigurarCedulaItem(cedulaItem, item, prefabBotao, new UnityAction[]{Comprar,SimularCompra});
-        //adiciona a celula a lista de celulas
-        itens.Add(cedulaItem);
+            cedulaItem = HelperConfig.ConfigurarCedulaItem(cedulaItem, item,  /*UnityAction*/() =>ConfigItemCompra(item));
+            //adiciona a celula a lista de celulas
+            itens.Add(cedulaItem);
         }
+
+
+    }
+
+    public void ConfigItemCompra(Itens item)
+    {
+        ItemSelecionado = item;
+        ModuloInterface.Ativarjanela(painelInterfaceCompra);
+    }
+
+    public void CarregarInterfaceCompra()
+    {
+        List < (string, string) > infos = new List<(string, string)>
+            {
+                ("Nome", ItemSelecionado.Nome),
+                ("Descrição", ItemSelecionado.Descricao),
+                ("Preço", $"R$ {ItemSelecionado.Preco}"),
+                ("Categoria", ItemSelecionado.Categoria.ToString()),
+                ("Tipo", ItemSelecionado.Tipo.ToString())
+            };
+        MenuCompraItem container = painelInterfaceCompra.GetComponent<MenuCompraItem>();
+
+
+        int count = 0;
+        GameObject linha = new GameObject("Linha");
+        linha = HelperConfig.ConfigurarLinhaCompra(linha, container);
+        foreach (var item in infos)
+        {
+            if (count >= 2)
+            {
+                linha = new GameObject("Linha");
+                linha = HelperConfig.ConfigurarLinhaCompra(linha, container);
+                count = 0;
+            }
+            CedulaCompra cedulaItem = Instantiate(prefabCelulaCompra,linha.transform);
+            cedulaItem=  HelperConfig.ConfigurarCedulaCompra(cedulaItem, item);
+            container.botoes.Add(cedulaItem);
+            count++;
+
+        }
+        GameObject pagamentocontainer = new GameObject("PagamentoContainer");
+        pagamentocontainer.transform.SetParent(container.InfosContainer, false);
+        foreach (TipoPagamento tipo in Enum.GetValues(typeof(TipoPagamento)))
+        {
+            Toggle tg = Instantiate(toggle, container.InfosContainer);
+          
+        }
+      
+
+
 
 
     }
@@ -90,8 +152,13 @@ public class ModuloLoja : MonoBehaviour
 
     }
 
-    public void Comprar() {
-        Debug.Log("naõ tem oq comprar");
+    public void Comprar(Itens compra) {
+
+        Despesas despesa = new Despesas(compra,"A vista",compra.Preco);
+
+        player.ProcessarCompra(compra.Preco);
+
+        Debug.Log("tilapia"+ despesa+" "+despesa.valor);
     }
     public void SimularCompra() {
         Debug.Log("naõ tem oq simular");

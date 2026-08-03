@@ -25,6 +25,8 @@ public class Player : MonoBehaviour
         {AtributosFinanceiros.Educacao,0}
     };
 
+    public List<Itens> Bens = new List<Itens>();
+
     public int desplar;
     public int educ;
     public int morad;
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour
     public Sprite spriteMorad;
     public Sprite spriteSaube;
     public Sprite spriteLaz;
+
+
 
 
 
@@ -72,6 +76,17 @@ public class Player : MonoBehaviour
             AlterarSaldoConta();
         }
     }
+
+    public void ProcessarCompra(float preco)
+    {
+        if(patrimonio-preco >= 0)
+        {
+            patrimonio -=preco;
+            AlterarSaldoConta();
+        }
+        return;
+
+    } 
 
     public void AlterarSaldoConta()
     {
