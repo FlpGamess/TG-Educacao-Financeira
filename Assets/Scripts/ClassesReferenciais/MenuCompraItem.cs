@@ -8,6 +8,7 @@ public class MenuCompraItem : MonoBehaviour
     public TextMeshProUGUI saldoConta;
     public TextMeshProUGUI saldoDisposicao;
     public Transform InfosContainer;
+    public GameObject InfosGerais;
     public Transform BtnsContainer;
     public List<CedulaCompra> botoes = new();
 
