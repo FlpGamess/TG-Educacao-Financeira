@@ -102,6 +102,7 @@ public class ModuloLoja : MonoBehaviour
                 ("Tipo", ItemSelecionado.Tipo.ToString())
             };
 
+
         MenuCompraItem container = painelInterfaceCompra.GetComponent<MenuCompraItem>();
 
 
