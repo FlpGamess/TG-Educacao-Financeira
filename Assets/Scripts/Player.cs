@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     };
 
     public List<Itens> Bens = new List<Itens>();
+    public List<Despesas> Dividas = new List<Despesas>();
 
     public int desplar;
     public int educ;
@@ -77,7 +78,18 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void ProcessarCompra(float preco)
+    public void ProcessarCompra(Itens bem,Despesas despesa)
+    {
+        Bens.Add(bem);
+        Dividas.Add(despesa);
+        Debug.Log(Bens.Count);
+        Debug.Log(Dividas.Count);
+
+
+    }
+
+    //deletar dps
+    public void ProcessaCompra(float preco)
     {
         if(patrimonio-preco >= 0)
         {

@@ -24,9 +24,9 @@ public static GameObject ConfigurarBtn(GameObject botao, string texto, UnityActi
         return cedula;
     }
 
-    public static CedulaCompra ConfigurarCedulaCompra(CedulaCompra cedula, (string titulo, string valor) item)
+    public static CelulaCompra ConfigurarCedulaCompra(CelulaCompra cedula, (string titulo, string valor) item)
     {
-        cedula.titulo.text = item.titulo;
+        cedula.Titulo.text = item.titulo;
         cedula.Informacao.text = item.valor;
         return cedula;
     }
@@ -34,7 +34,7 @@ public static GameObject ConfigurarBtn(GameObject botao, string texto, UnityActi
     public static GameObject ConfigurarLinhaCompra(GameObject linha,MenuCompraItem container)
     {
         linha.AddComponent<RectTransform>();
-        linha.transform.SetParent(container.InfosContainer, false);
+       // linha.transform.SetParent(container.InfosContainer, false);
 
         HorizontalLayoutGroup layout = linha.AddComponent<HorizontalLayoutGroup>();
         layout.childControlWidth = true;

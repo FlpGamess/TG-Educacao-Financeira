@@ -75,7 +75,7 @@ public class ModuloInterface : MonoBehaviour
                 moduloloja.CarregarLoja();
                 break;
             case "MenuCompraItem":
-                Debug.Log("teste" + jname);
+               
                 moduloloja.CarregarInterfaceCompra();
                 break;
         }
