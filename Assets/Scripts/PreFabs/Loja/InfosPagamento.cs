@@ -34,4 +34,5 @@ public class InfosPagamento : MonoBehaviour
         }
 
     }
+
 }

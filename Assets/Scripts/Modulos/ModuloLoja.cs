@@ -128,11 +128,9 @@ public class ModuloLoja : MonoBehaviour
 
         infop.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.AVista, TipoPagamento.Parcelado);
         infop.SetTooglesGroup(infop.GetComponent<ToggleGroup>());
+        TipoPagamento opcaoPagamento = infop.OpcaoMarcada();
 
-        infoparcel.Titulo.text = "parcela";
-        infoparcel.dropdownParcelas.ClearOptions();
-        infoparcel.dropdownParcelas.AddOptions(new List<string> { "1x", "2x", "3x", "4x", "5x", "x6" });
-
+        infoparcel.ConfigurarDDPagamento(opcaoPagamento);
         foreach (string bt in container.btnsTitulos)
         //foreach (KeyValuePair<AtributosFinanceiros, int> atb in Player.AtbFinanceiros)
         {
@@ -142,7 +140,7 @@ public class ModuloLoja : MonoBehaviour
             if (!container.Botoes.Contains(botao) && botao)
             {
                 //executa a configuração do botão mandando ele,o texto e a função
-                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado, infop.OpcaoMarcada(), infoparcel.dropdownParcelas.value +1));
+                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado, opcaoPagamento, infoparcel.dropdownParcelas.value +1));
                 //botao = HelperConfig.ConfigurarBtn(botao, atb.Key.ToString(), funcao67temporaria);               
                 //adiciona o botão na lista de botões
                 container.Botoes.Add(botao);
