@@ -110,6 +110,8 @@ public class ModuloLoja : MonoBehaviour
         DropdownContainer infoparcel = Instantiate(container.infosParcela, container.infosContainer);
         GameObject botao;
 
+ 
+
         container.saldoConta.text = "$" + player.patrimonio;
         container.saldoDisposicao.text =  disposicao.disposicao +"%" ;
 
@@ -129,6 +131,9 @@ public class ModuloLoja : MonoBehaviour
         infop.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.AVista, TipoPagamento.Parcelado);
         infop.SetTooglesGroup(infop.GetComponent<ToggleGroup>());
         TipoPagamento opcaoPagamento = infop.OpcaoMarcada();
+
+        infop.Opcao1.onValueChanged.AddListener (opcaoPagamento) => AtualizarPagamento();
+        infop.Opcao2.onValueChanged.AddListener (opcaoPagamento) => AtualizarPagamento();
 
         infoparcel.ConfigurarDDPagamento(opcaoPagamento);
         foreach (string bt in container.btnsTitulos)
@@ -193,6 +198,12 @@ public class ModuloLoja : MonoBehaviour
 
 
 
+    }
+
+    public void AtualizarPagamento()
+    {
+        TipoPagamento = tPagamento = InfosPagamento.OpcaoMarcada();
+        infoparcel.ConfigurarDDPagamento(TPagamento);
     }
 
     public void LimparCedulas()

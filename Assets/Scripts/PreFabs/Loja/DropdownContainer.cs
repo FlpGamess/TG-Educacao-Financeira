@@ -9,14 +9,22 @@ public class DropdownContainer : MonoBehaviour
 
     public void ConfigurarDDPagamento(TipoPagamento tpagamento)
     {
-        Titulo.text = "parcela";
+        Titulo.text = "Parcela";
         dropdownParcelas.ClearOptions();
-        if(tpagamento== TipoPagamento.AVista)
+
+        if (tpagamento == TipoPagamento.AVista)
         {
             dropdownParcelas.AddOptions(new List<string> { "0x" });
-            return;
+            dropdownParcelas.interactable = false;
+
         }
-        dropdownParcelas.AddOptions(new List<string> { "1x", "2x", "3x", "4x", "5x", "6x" });
+        else
+        {
+            dropdownParcelas.AddOptions(new List<string> { "1x", "2x", "3x", "4x", "5x", "6x" });
+            dropdownParcelas.interactable = true;
+        }
+        dropdownParcelas.value = 0;
+        dropdownParcelas.RefreshShownValue();
 
     }
     
