@@ -23,6 +23,7 @@ public class DropdownContainer : MonoBehaviour
             dropdownParcelas.AddOptions(new List<string> { "1x", "2x", "3x", "4x", "5x", "6x" });
             dropdownParcelas.interactable = true;
         }
+        Debug.Log(tpagamento + "a lista ai" + dropdownParcelas.value);
         dropdownParcelas.value = 0;
         dropdownParcelas.RefreshShownValue();
 

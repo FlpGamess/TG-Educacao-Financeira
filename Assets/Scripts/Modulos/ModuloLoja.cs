@@ -48,9 +48,12 @@ public class ModuloLoja : MonoBehaviour
     public ModuloDisposicao disposicao;
     public ModuloTempo tempo;
 
+    public InfosPagamento InfoPag;
+    public DropdownContainer InfoParcel;
 
 
-    
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -106,8 +109,8 @@ public class ModuloLoja : MonoBehaviour
     {
         MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
         InfosGeraisLoja infog = Instantiate(container.infosGerais, container.infosContainer);
-        InfosPagamento infop = Instantiate(container.infosPagamento, container.infosContainer);
-        DropdownContainer infoparcel = Instantiate(container.infosParcela, container.infosContainer);
+        InfoPag = Instantiate(container.infosPagamento, container.infosContainer);
+        InfoParcel = Instantiate(container.infosParcela, container.infosContainer);
         GameObject botao;
 
  
@@ -128,14 +131,14 @@ public class ModuloLoja : MonoBehaviour
         infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Descrição";
         infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Descricao;
 
-        infop.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.AVista, TipoPagamento.Parcelado);
-        infop.SetTooglesGroup(infop.GetComponent<ToggleGroup>());
-        TipoPagamento opcaoPagamento = infop.OpcaoMarcada();
+        InfoPag.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.AVista, TipoPagamento.Parcelado);
+        InfoPag.SetTooglesGroup(InfoPag.GetComponent<ToggleGroup>());
+        TipoPagamento opcaoPagamento = InfoPag.OpcaoMarcada();
 
-        infop.Opcao1.onValueChanged.AddListener (opcaoPagamento) => AtualizarPagamento();
-        infop.Opcao2.onValueChanged.AddListener (opcaoPagamento) => AtualizarPagamento();
+        InfoPag.Opcao1.onValueChanged.AddListener ((valor) => AtualizarPagamento());
+        InfoPag.Opcao2.onValueChanged.AddListener ((valor) => AtualizarPagamento());
 
-        infoparcel.ConfigurarDDPagamento(opcaoPagamento);
+        InfoParcel.ConfigurarDDPagamento(opcaoPagamento);
         foreach (string bt in container.btnsTitulos)
         //foreach (KeyValuePair<AtributosFinanceiros, int> atb in Player.AtbFinanceiros)
         {
@@ -145,7 +148,7 @@ public class ModuloLoja : MonoBehaviour
             if (!container.Botoes.Contains(botao) && botao)
             {
                 //executa a configuração do botão mandando ele,o texto e a função
-                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado, opcaoPagamento, infoparcel.dropdownParcelas.value +1));
+                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado, opcaoPagamento, InfoParcel.dropdownParcelas.value));
                 //botao = HelperConfig.ConfigurarBtn(botao, atb.Key.ToString(), funcao67temporaria);               
                 //adiciona o botão na lista de botões
                 container.Botoes.Add(botao);
@@ -202,8 +205,8 @@ public class ModuloLoja : MonoBehaviour
 
     public void AtualizarPagamento()
     {
-        TipoPagamento = tPagamento = InfosPagamento.OpcaoMarcada();
-        infoparcel.ConfigurarDDPagamento(TPagamento);
+        TipoPagamento TPagamento = InfoPag.OpcaoMarcada();
+        InfoParcel.ConfigurarDDPagamento(TPagamento);
     }
 
     public void LimparCedulas()
@@ -225,9 +228,14 @@ public class ModuloLoja : MonoBehaviour
 
     public void Comprar(Itens compra, TipoPagamento tipopg, int parcela) {
         Despesas despesa = new Despesas(compra, tipopg, compra.Preco);
-        for (int i = 0; i < parcela; i++) {
-        
+        Debug.Log("parcela tipo" + tipopg);
+
+        if (tipopg == TipoPagamento.AVista)
+        {
+            parcela = 0;
         }
+
+        Debug.Log("parcela ini" + parcela);
 
         if (parcela == 0) {
             Parcela p = new Parcela(compra.Preco,ModuloTempo.semana);
