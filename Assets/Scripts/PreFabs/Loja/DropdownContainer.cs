@@ -28,6 +28,13 @@ public class DropdownContainer : MonoBehaviour
         dropdownParcelas.RefreshShownValue();
 
     }
+
+    public int ConverterValor()
+    {
+        string valor = dropdownParcelas.options[dropdownParcelas.value].text;
+        return int.Parse(valor.Replace("x",""));
+
+    }
     
 
 }

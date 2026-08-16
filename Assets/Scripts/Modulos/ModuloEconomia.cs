@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public class DadosInvestimento
@@ -22,12 +23,40 @@ public class ModuloEconomia : MonoBehaviour
 
     private List<GameObject> itensInstanciados = new List<GameObject>();
 
+    public void OnEnable()
+    {
+        Player.BensAtualizados += DebitarDespesas;
+        ModuloTempo.isSemanaAvancada += DebitarDespesas;
+
+    }
+
+    public void OnDisable()
+    {
+        Player.BensAtualizados -= DebitarDespesas;
+        ModuloTempo.isSemanaAvancada -= DebitarDespesas;
+    }
+
     void Start()
     {
       MontarLista();   
     }
 
-    void MontarLista()
+    public void DebitarDespesas()
+    {
+        foreach (Despesas despesa in player.Dividas)
+        {
+                Parcela parcela = despesa.parcelas.FirstOrDefault();
+                if (parcela != null && parcela.semana == ModuloTempo.semana)
+                {
+                    player.DebitarPagamento(parcela.valor);
+                    despesa.parcelas.RemoveAt(0);
+                }
+            
+        }
+    }
+
+
+        void MontarLista()
     {
         ModuloTempo.isSemanaAvancada += RenderInvestimentos; // ADICIONAR
 

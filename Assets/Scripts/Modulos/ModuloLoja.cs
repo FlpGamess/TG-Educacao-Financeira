@@ -105,18 +105,17 @@ public class ModuloLoja : MonoBehaviour
         moduloInterface.Ativarjanela(menuCompraItem);
     }
 
+
+
     public void CarregarInterfaceCompra()
     {
+        LimparInterfaceCompra();
         MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
         InfosGeraisLoja infog = Instantiate(container.infosGerais, container.infosContainer);
         InfoPag = Instantiate(container.infosPagamento, container.infosContainer);
         InfoParcel = Instantiate(container.infosParcela, container.infosContainer);
         GameObject botao;
-
- 
-
-        container.saldoConta.text = "$" + player.patrimonio;
-        container.saldoDisposicao.text =  disposicao.disposicao +"%" ;
+        container = AtualizarPlayerInfosIC(container);
 
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Nome";
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Nome;
@@ -142,13 +141,14 @@ public class ModuloLoja : MonoBehaviour
         foreach (string bt in container.btnsTitulos)
         //foreach (KeyValuePair<AtributosFinanceiros, int> atb in Player.AtbFinanceiros)
         {
+
             //cria um botão atraves do preFabBotao no containerBotoes
             botao = Instantiate(preFabBotao, container.btnsContainer);
             //se a lista de botões da loja não tiver esse botão e ele existir
             if (!container.Botoes.Contains(botao) && botao)
             {
                 //executa a configuração do botão mandando ele,o texto e a função
-                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado, opcaoPagamento, InfoParcel.dropdownParcelas.value));
+                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado));
                 //botao = HelperConfig.ConfigurarBtn(botao, atb.Key.ToString(), funcao67temporaria);               
                 //adiciona o botão na lista de botões
                 container.Botoes.Add(botao);
@@ -168,39 +168,6 @@ public class ModuloLoja : MonoBehaviour
                 ("Categoria", itemSelecionado.Categoria.ToString()),
                 ("Tipo", itemSelecionado.Tipo.ToString())
             };*/
-
-
-
-        /*
-        int count = 0;
-        GameObject linha = new GameObject("Linha");
-        linha = HelperConfig.ConfigurarLinhaCompra(linha, container);
-        foreach (var item in infos)
-        {
-            if (count >= 2)
-            {
-                linha = new GameObject("Linha");
-                linha = HelperConfig.ConfigurarLinhaCompra(linha, container);
-                count = 0;
-            }
-            CelulaCompra cedulaItem = Instantiate(prefabCelulaCompra,linha.transform);
-            cedulaItem=  HelperConfig.ConfigurarCelulaCompra(cedulaItem, item);
-            container.botoes.Add(cedulaItem);
-            count++;
-
-        }
-        GameObject pagamentocontainer = new GameObject("PagamentoContainer");
-        pagamentocontainer.transform.SetParent(container.InfosContainer, false);
-        foreach (TipoPagamento tipo in Enum.GetValues(typeof(TipoPagamento)))
-        {
-            Toggle tg = Instantiate(toggle, container.InfosContainer);
-          
-        }*/
-
-
-
-
-
     }
 
     public void AtualizarPagamento()
@@ -217,6 +184,19 @@ public class ModuloLoja : MonoBehaviour
         }
         itens.Clear();
     }
+
+    public void LimparInterfaceCompra()
+    {
+        MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
+        foreach(Transform comp in container.infosContainer)
+        {
+            Destroy(comp.gameObject);
+        }
+        foreach(Transform comp in container.btnsContainer)
+        {
+            Destroy(comp.gameObject);
+        }
+    }
     //vou deletar isso no futuro, relaxa, é só pra aparecer uma mensagem pra entender que ta funcionando 
     //o click no botao
     public void MudarCategoria(AtributosFinanceiros Categoria)
@@ -226,37 +206,32 @@ public class ModuloLoja : MonoBehaviour
 
     }
 
-    public void Comprar(Itens compra, TipoPagamento tipopg, int parcela) {
+    public void Comprar(Itens compra) {
+        MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
+        TipoPagamento tipopg = InfoPag.OpcaoMarcada();
+        int parcela = InfoParcel.ConverterValor();
+        int semana = ModuloTempo.semana;
+
         Despesas despesa = new Despesas(compra, tipopg, compra.Preco);
-        Debug.Log("parcela tipo" + tipopg);
 
-        if (tipopg == TipoPagamento.AVista)
-        {
-            parcela = 0;
-        }
+        despesa.GerarParcelas(compra.Preco,semana,parcela);
 
-        Debug.Log("parcela ini" + parcela);
+        player.ProcessarCompra(compra, despesa);
 
-        if (parcela == 0) {
-            Parcela p = new Parcela(compra.Preco,ModuloTempo.semana);
-            Debug.Log("parcela " + p.semana);
-            despesa.parcelas.Add(p);
-        }
-        else if (parcela > 0){
-            for (int i = 0; i < parcela; i++) {
-                Parcela p = new Parcela(compra.Preco, (ModuloTempo.semana + (4 * (i + 1))));
-                despesa.parcelas.Add(p);
-                Debug.Log("parcela " + p.semana);
-            }
-        }
-
-            player.ProcessarCompra(compra, despesa);
-
-        player.ProcessaCompra(compra.Preco);
+        //player.DebitarPagamento(compra.Preco);
+        container =AtualizarPlayerInfosIC(container);
 
      }
     public void SimularCompra() {
         Debug.Log("naõ tem oq simular");
     }
+    public MenuCompraItem AtualizarPlayerInfosIC(MenuCompraItem container)
+    {
+        container.saldoConta.text = "$" + player.patrimonio;
+        container.saldoDisposicao.text = disposicao.disposicao + "%";
 
+        return container;
     }
+
+}
+

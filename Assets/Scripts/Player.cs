@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
@@ -48,6 +49,9 @@ public class Player : MonoBehaviour
     public Sprite spriteSaube;
     public Sprite spriteLaz;
 
+    public static event Action BensAtualizados;
+  
+
     void Start()
     {
         patrimonio = 1621.00f;
@@ -74,18 +78,17 @@ public class Player : MonoBehaviour
     {
         Bens.Add(bem);
         Dividas.Add(despesa);
-        Debug.Log(Bens.Count);
-        Debug.Log(Dividas.Count);
-
+        BensAtualizados.Invoke();
 
     }
 
     //deletar dps
-    public void ProcessaCompra(float preco)
+    public void DebitarPagamento(float preco)
     {
-        if(patrimonio-preco >= 0)
+      
+        if (patrimonio-preco >= 0)
         {
-            patrimonio -=preco;
+            patrimonio -= preco;
             AlterarSaldoConta();
         }
         return;
