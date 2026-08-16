@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Linq;
 
 public enum TipoInvestimento
 {
@@ -33,6 +34,19 @@ public class ModuloEconomia : MonoBehaviour
 
     private List<(DadosInvestimento banco, GameObject item)> itensInstanciados = new List<(DadosInvestimento, GameObject)>();
 
+    public void OnEnable()
+    {
+        Player.BensAtualizados += DebitarDespesas;
+        ModuloTempo.isSemanaAvancada += DebitarDespesas;
+
+    }
+
+    public void OnDisable()
+    {
+        Player.BensAtualizados -= DebitarDespesas;
+        ModuloTempo.isSemanaAvancada -= DebitarDespesas;
+    }
+
     void Start()
     {
         ModuloTempo.isSemanaAvancada += RenderInvestimentos;
@@ -43,6 +57,22 @@ public class ModuloEconomia : MonoBehaviour
         // MontarLista();
     }
 
+    public void DebitarDespesas()
+    {
+        foreach (Despesas despesa in player.Dividas)
+        {
+                Parcela parcela = despesa.parcelas.FirstOrDefault();
+                if (parcela != null && parcela.semana == ModuloTempo.semana)
+                {
+                    player.DebitarPagamento(parcela.valor);
+                    despesa.parcelas.RemoveAt(0);
+                }
+            
+        }
+    }
+
+
+        void MontarLista()
     void TempoGravado()
 {
     // Se estiver na semana 4, ele avalia e grava o resultado
