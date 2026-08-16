@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class ModuloInterface : MonoBehaviour
@@ -33,8 +34,22 @@ public class ModuloInterface : MonoBehaviour
             //ative a janela no indice 0 de janelasAbertas
             janelasAbertas[0].SetActive(true);
             CarregarCompoJanela(janela.name);
+            ForcarRedesenho(janela);
         }
     }
+
+
+    public void ForcarRedesenho(GameObject painel)
+    {
+        Canvas.ForceUpdateCanvases();
+
+        ScrollRect scroll = painel.GetComponentInChildren<ScrollRect>();
+        if (scroll != null)
+        {
+            scroll.verticalNormalizedPosition = 1f;
+        }
+    }
+
     //descobrir o indice de uma janela
     //janelasAbertas.IndexOf(janela);
 
