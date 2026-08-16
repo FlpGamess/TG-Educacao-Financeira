@@ -13,14 +13,15 @@ public class CelulaItemLoja : MonoBehaviour
     public TextMeshProUGUI preco;
     public TextMeshProUGUI descricao;
     //Lista dos botões  do componente
-    List<GameObject> botoesItem = new List<GameObject>();
+    public GameObject btnComprar;
+    //List<GameObject> botoesItem = new List<GameObject>();
     //texto dos botões
-    public string[] btnNomes = { "Comprar", "Simular Compra"};
+    //public string[] btnNomes = { "Comprar", "Simular Compra"};
 
     //função para adicionar os botões, tentando manter conceito de classe quando der
-    public void AdicionarBotao(GameObject btn)
+    /*public void AdicionarBotao(GameObject btn)
     {
         botoesItem.Add(btn);
-    }
+    }*/
 
 }
