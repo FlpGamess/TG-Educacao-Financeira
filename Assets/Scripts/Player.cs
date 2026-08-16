@@ -56,7 +56,8 @@ public class Player : MonoBehaviour
     {
         patrimonio = 1621.00f;
         AlterarSaldoConta();
-        ModuloTempo.isSemanaAvancada += AtualizarPatrimonio;
+        ModuloTempo.isSemanaAvancada -= AtualizarPatrimonio;
+        ModuloTempo.isSemanaAvancada += AtualizarPatrimonio; 
 
         slot1.sprite = spriteDesplar;
         slot2.sprite = spriteEduc;
@@ -67,6 +68,7 @@ public class Player : MonoBehaviour
 
     void AtualizarPatrimonio()
     {
+        Debug.Log("Somando patrimonio na semana " + ModuloTempo.semana);
         if (ModuloTempo.semana > 1 && (ModuloTempo.semana - 1) % 4 == 0)
         {
             patrimonio += 1621.00f;
@@ -97,7 +99,7 @@ public class Player : MonoBehaviour
 
     public void AlterarSaldoConta()
     {
-        saldocontav.text = "$" + patrimonio.ToString();
+        saldocontav.text = "$" + patrimonio.ToString("F2");
     }
 
 
