@@ -71,8 +71,6 @@ public class ModuloEconomia : MonoBehaviour
         }
     }
 
-
-        void MontarLista()
     void TempoGravado()
 {
     // Se estiver na semana 4, ele avalia e grava o resultado
