@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
 
     public void AlterarSaldoConta()
     {
-        saldocontav.text = "$" + patrimonio.ToString();
+        saldocontav.text = "$" + patrimonio.ToString("F2");
     }
 
 
