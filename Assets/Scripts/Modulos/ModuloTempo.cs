@@ -37,7 +37,6 @@ public class ModuloTempo : MonoBehaviour
     public void AtualizarSemana()
     {
         semana++;
-        isSemanaAvancada?.Invoke();
         semanav.text = "Semana"+semana.ToString() ;
         isSemanaAvancada?.Invoke();
     }
