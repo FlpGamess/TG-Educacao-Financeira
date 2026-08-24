@@ -28,7 +28,7 @@ public class ModuloEconomia : MonoBehaviour
     public Player player;
     public GameObject prefabItemInvestimento;
     public Transform content;
-    public float cdiSemanal = 0.002f;
+    public ModuloRendimentos moduloRendimento;
     public Button btnInvestimentos;
     private bool valorTot = false;
 
@@ -168,12 +168,16 @@ public class ModuloEconomia : MonoBehaviour
         foreach (var banco in bancos)
         {
             if (banco.valorInvestido <= 0) continue;
-
-            float taxaSemanal = (banco.percentualCDI / 100f) * cdiSemanal;
-            banco.valorInvestido *= (1 + taxaSemanal);
+            banco.valorInvestido = CalcularInvestimento(banco.percentualCDI,banco.valorInvestido);
         }
 
         AtualizarUI();
+    }
+    
+    public float CalcularInvestimento(float percentualCDI, float valorInvestido)
+    {
+        float taxaSemanal = (percentualCDI / 100f) * moduloRendimento.cdiSemanal;
+        return valorInvestido   * (1 + taxaSemanal);
     }
 
     public void Resgatar(DadosInvestimento banco)

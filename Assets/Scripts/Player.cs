@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
 
     [Header("Modulos")]
     public ModuloTempo moduloTempo;
+    public ModuloRendimentos moduloRendimentos;
 
     [Header("Interfaces")]
     public TextMeshProUGUI saldocontav;
@@ -54,7 +55,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        patrimonio = 1621.00f;
+        patrimonio = moduloRendimentos.salario;
         AlterarSaldoConta();
         ModuloTempo.isSemanaAvancada += AtualizarPatrimonio;
 
@@ -67,9 +68,9 @@ public class Player : MonoBehaviour
 
     void AtualizarPatrimonio()
     {
-        if (ModuloTempo.semana > 1 && (ModuloTempo.semana - 1) % 4 == 0)
+        if (ModuloTempo.semana > 1 &&(ModuloTempo.semana - 1) % 4 == 0)
         {
-            patrimonio += 1621.00f;
+            patrimonio += moduloRendimentos.salario;
             AlterarSaldoConta();
         }
     }
