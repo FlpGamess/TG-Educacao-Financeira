@@ -11737,20 +11737,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuloEconomia
   bancos:
   - tipo: 0
-    descricao: "S\xF3 pode ser resgatado depois de 4 semanas\n"
+    descricao: 
     percentualCDI: 110
     valorInvestido: 0
+    valorOriginal: 0
     semanaInvestimento: -1
-  - tipo: 0
+    mudanca: 0
+    taxaAd: 0
+  - tipo: 1
     descricao: 
     percentualCDI: 95
     valorInvestido: 0
+    valorOriginal: 0
     semanaInvestimento: -1
-  - tipo: 0
+    mudanca: 0.0003
+    taxaAd: 0
+  - tipo: 2
     descricao: 
     percentualCDI: 120
     valorInvestido: 0
+    valorOriginal: 0
     semanaInvestimento: -1
+    mudanca: 0.001
+    taxaAd: 0.0005
   player: {fileID: 1431202042}
   prefabItemInvestimento: {fileID: 696171831501486677, guid: 8e245e442e586424e9dae3fe49bb7285, type: 3}
   content: {fileID: 1540666229}

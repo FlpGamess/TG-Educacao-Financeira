@@ -51,7 +51,7 @@ public class Player : MonoBehaviour
     public Sprite spriteLaz;
 
     public static event Action BensAtualizados;
-  
+
 
     void Start()
     {
@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
     //deletar dps
     public void DebitarPagamento(float preco)
     {
-      
+
         if (patrimonio-preco >= 0)
         {
             patrimonio -= preco;
@@ -94,7 +94,7 @@ public class Player : MonoBehaviour
         }
         return;
 
-    } 
+    }
 
     public void AlterarSaldoConta()
     {
