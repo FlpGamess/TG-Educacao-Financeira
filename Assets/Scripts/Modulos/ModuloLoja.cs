@@ -1,13 +1,15 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Reflection;
-
 //using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
+using static UnityEditor.PlayerSettings;
 //classe da loja do jogo
 public class ModuloLoja : MonoBehaviour
 {   [Header("Paginas")]
@@ -15,6 +17,7 @@ public class ModuloLoja : MonoBehaviour
     public GameObject menuLoja;
     //painel de compra do item
     public GameObject menuCompraItem;
+    public GameObject menuCompraSim;
 
     [Header("Prefabs")]
     //componente das celulas dos itens da loja que ficarão em lista
@@ -47,9 +50,15 @@ public class ModuloLoja : MonoBehaviour
     public ModuloInterface moduloInterface;
     public ModuloDisposicao disposicao;
     public ModuloTempo tempo;
+    public ModuloRendimentos modulorendimentos;
+    public ModuloEconomia moduloEconomia;
 
     public InfosPagamento InfoPag;
     public DropdownContainer InfoParcel;
+
+
+    private UnityAction[] FuncoesCompraItem; //= {() => Comprar(itemSelecionado), ()=> SimularCompra(itemSelecionado) };
+
 
 
 
@@ -105,6 +114,12 @@ public class ModuloLoja : MonoBehaviour
         moduloInterface.Ativarjanela(menuCompraItem);
     }
 
+    public void ConfigJanelas(GameObject pagina)
+    {
+        moduloInterface.Ativarjanela(pagina);
+
+    }
+
 
 
     public void CarregarInterfaceCompra()
@@ -115,7 +130,9 @@ public class ModuloLoja : MonoBehaviour
         InfoPag = Instantiate(container.infosPagamento, container.infosContainer);
         InfoParcel = Instantiate(container.infosParcela, container.infosContainer);
         GameObject botao;
-        container = AtualizarPlayerInfosIC(container);
+        container.saldoConta = AtualizarPlayerInfos(container.saldoConta,0);
+        container.saldoDisposicao = AtualizarPlayerInfos(container.saldoDisposicao,1);
+
 
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Nome";
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Nome;
@@ -138,7 +155,9 @@ public class ModuloLoja : MonoBehaviour
         InfoPag.Opcao2.onValueChanged.AddListener ((valor) => AtualizarPagamento());
 
         InfoParcel.ConfigurarDDPagamento(opcaoPagamento);
-        foreach (string bt in container.btnsTitulos)
+        FuncoesCompraItem = new UnityAction[] { () => Comprar(itemSelecionado), ()=> SimularCompra(itemSelecionado) };
+        for(int i = 0; i<container.btnsTitulos.Length; i++)
+        //foreach (string bt in container.btnsTitulos)
         //foreach (KeyValuePair<AtributosFinanceiros, int> atb in Player.AtbFinanceiros)
         {
 
@@ -148,7 +167,7 @@ public class ModuloLoja : MonoBehaviour
             if (!container.Botoes.Contains(botao) && botao)
             {
                 //executa a configuração do botão mandando ele,o texto e a função
-                botao = HelperConfig.ConfigurarBtn(botao, bt, () => Comprar(itemSelecionado));
+                botao = HelperConfig.ConfigurarBtn(botao, container.btnsTitulos[i], FuncoesCompraItem[i]);
                 //botao = HelperConfig.ConfigurarBtn(botao, atb.Key.ToString(), funcao67temporaria);               
                 //adiciona o botão na lista de botões
                 container.Botoes.Add(botao);
@@ -206,25 +225,143 @@ public class ModuloLoja : MonoBehaviour
 
     }
 
-    public void Comprar(Itens compra) {
-        MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
+    public Despesas GerarDespesas(Itens compra)
+    {
         TipoPagamento tipopg = InfoPag.OpcaoMarcada();
         int parcela = InfoParcel.ConverterValor();
         int semana = ModuloTempo.semana;
 
         Despesas despesa = new Despesas(compra, tipopg, compra.Preco);
 
-        despesa.GerarParcelas(compra.Preco,semana,parcela);
+        despesa.GerarParcelas(compra.Preco, semana, parcela);
+
+        return despesa;
+
+    }
+
+    public void Comprar(Itens compra) {
+        MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
+        Despesas despesa = GerarDespesas(compra);
 
         player.ProcessarCompra(compra, despesa);
 
         //player.DebitarPagamento(compra.Preco);
-        container =AtualizarPlayerInfosIC(container);
+        container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
+        container.saldoDisposicao = AtualizarPlayerInfos(container.saldoDisposicao, 1);
 
-     }
-    public void SimularCompra() {
-        Debug.Log("naõ tem oq simular");
     }
+
+    public void SimularCompra(Itens compra) {
+        MenuCompraSim container = menuCompraSim.GetComponent<MenuCompraSim>();
+        int semana = ModuloTempo.semana;
+        int parcela = InfoParcel.ConverterValor();
+        ConfigJanelas(menuCompraSim);
+        Despesas despesa = GerarDespesas(compra);
+
+        //aqui depois vou dividir mais
+        int mes = ((semana - 1) / 4) + 1;
+        int mesfinal = mes + parcela;
+        float investidosimulado = 0;
+        Dictionary<int, float> gastos = new();
+        Dictionary<int, float> gIfCompra = new();
+        Dictionary<int, float> rendimentos = new();
+        Dictionary<int, float> saldo = new();
+
+        for (int m = mes; m <= (mesfinal); m++) {
+            gastos.Add(m, 0);
+            gIfCompra.Add(m, 0);
+            rendimentos.Add(m,modulorendimentos.salario);
+            foreach (var banco in moduloEconomia.bancos)
+            {
+                if (banco.valorInvestido <= 0) continue;
+                if (m == mes)
+                {
+                    investidosimulado = moduloEconomia.CalcularInvestimento(banco.percentualCDI, banco.valorInvestido);
+                    rendimentos[m] += (investidosimulado - banco.valorInvestido);
+                    Debug.Log("Primeirinha "+investidosimulado);
+                }
+                else
+                {
+                    
+                    float aux = moduloEconomia.CalcularInvestimento(banco.percentualCDI, investidosimulado);
+                    rendimentos[m] += (aux - investidosimulado);
+                    investidosimulado = aux;
+                }
+                }
+        }
+
+        foreach (Despesas despesas in player.Dividas)
+        {
+            foreach (Parcela parcel in despesas.parcelas)
+            {
+                int mesparcela = ((parcel.semana - 1) / 4) + 1;
+                if (gastos.ContainsKey(mesparcela)) {
+                    gastos[mesparcela] += parcel.valor;
+                    gIfCompra[mesparcela] += parcel.valor;
+
+                }
+            }
+        }
+        
+        foreach(Parcela parcel in despesa.parcelas)
+        {
+            int mesparcela = ((parcel.semana - 1) / 4) + 1;
+            if (gIfCompra.ContainsKey(mesparcela))
+            {
+                gIfCompra[mesparcela] += parcel.valor;
+            }
+
+        }
+
+        //tem que arrumar, arredondar os valores pra duas casas depois da virgula
+        foreach (int m in gastos.Keys.ToList())
+        {
+            gastos[m]= Mathf.Round(gastos[m] * 100f)/100f;
+            gIfCompra[m] = Mathf.Round(gIfCompra[m] * 100f) / 100f;
+            rendimentos[m] = Mathf.Round(rendimentos[m] * 100f) / 100f;
+        }
+
+            foreach (int m in gastos.Keys)
+        {
+            Debug.Log(
+                $"Mês {m} | " +
+                $"Gastos: R$ {gastos[m]} | " +
+                $"Gastos + Compra: R$ {gIfCompra[m]} | " +
+                $"Rendimentos: R$ {rendimentos[m]}"
+            );
+        }
+        container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
+        moduloInterface.CriarGraficoLinhaSimples(gastos,gIfCompra,rendimentos, "Simulação de suas Finanças Caso Compre o Item Desejado ao Longo das Parcelas");
+        HelperConfig.ConfigurarBtn(container.btnComprar,"Comprar", () => BtnComprarSim());
+
+
+    }
+
+    public void BtnComprarSim()
+    {
+        Comprar(itemSelecionado);
+        moduloInterface.OcultarJanela(menuCompraSim);
+        moduloInterface.OcultarJanela(menuCompraItem);
+
+
+    }
+
+
+    public TextMeshProUGUI AtualizarPlayerInfos(TextMeshProUGUI info, int modo)
+    {
+        switch (modo)
+        {
+            case 0:
+                info.text = "$" + player.patrimonio;
+                break;
+                case 1:
+                info.text = disposicao.disposicao + "%";
+                break;
+
+        }
+        return info;
+    }
+
     public MenuCompraItem AtualizarPlayerInfosIC(MenuCompraItem container)
     {
         container.saldoConta.text = "$" + player.patrimonio;
@@ -232,6 +369,8 @@ public class ModuloLoja : MonoBehaviour
 
         return container;
     }
+
+
 
 }
 

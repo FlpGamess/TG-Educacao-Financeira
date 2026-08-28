@@ -19,4 +19,5 @@ public class MenuCompraItem : MonoBehaviour
     public List<GameObject> Botoes = new List<GameObject>();
     public string[] btnsTitulos = {"Comprar","Simular"};
 
+
 }
