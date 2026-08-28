@@ -1,16 +1,21 @@
+using TMPro;
 using UnityEngine;
+using XCharts.Runtime;
 
 public class MenuCompraSim : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Cabeçalho")]
+    public TextMeshProUGUI saldoConta;
+    [Header("Containers")]
+    public Transform contacontainer;
+    public Transform graficocontainer;
+    public Transform btncontainer;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [Header("Grafico")]
+    public LineChart gHistoricoIfCompra;
+
+    [Header("Botões")]
+    public GameObject btnCancelar;
+    public GameObject btnComprar;
+
 }

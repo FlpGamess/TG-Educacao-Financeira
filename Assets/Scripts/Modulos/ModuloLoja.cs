@@ -1,12 +1,14 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 //using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 using static UnityEditor.PlayerSettings;
 //classe da loja do jogo
 public class ModuloLoja : MonoBehaviour
@@ -128,7 +130,9 @@ public class ModuloLoja : MonoBehaviour
         InfoPag = Instantiate(container.infosPagamento, container.infosContainer);
         InfoParcel = Instantiate(container.infosParcela, container.infosContainer);
         GameObject botao;
-        container = AtualizarPlayerInfosIC(container);
+        container.saldoConta = AtualizarPlayerInfos(container.saldoConta,0);
+        container.saldoDisposicao = AtualizarPlayerInfos(container.saldoDisposicao,1);
+
 
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Nome";
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Nome;
@@ -242,14 +246,15 @@ public class ModuloLoja : MonoBehaviour
         player.ProcessarCompra(compra, despesa);
 
         //player.DebitarPagamento(compra.Preco);
-        container =AtualizarPlayerInfosIC(container);
+        container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
+        container.saldoDisposicao = AtualizarPlayerInfos(container.saldoDisposicao, 1);
 
-     }
+    }
 
     public void SimularCompra(Itens compra) {
+        MenuCompraSim container = menuCompraSim.GetComponent<MenuCompraSim>();
         int semana = ModuloTempo.semana;
         int parcela = InfoParcel.ConverterValor();
-        Debug.Log("Simulando Compra");
         ConfigJanelas(menuCompraSim);
         Despesas despesa = GerarDespesas(compra);
 
@@ -279,7 +284,6 @@ public class ModuloLoja : MonoBehaviour
                 {
                     
                     float aux = moduloEconomia.CalcularInvestimento(banco.percentualCDI, investidosimulado);
-                    Debug.Log("Aqui pra frente é tacale pau " + investidosimulado + " a nova " + aux);
                     rendimentos[m] += (aux - investidosimulado);
                     investidosimulado = aux;
                 }
@@ -309,19 +313,54 @@ public class ModuloLoja : MonoBehaviour
 
         }
 
-        foreach (int m in gastos.Keys)
+        //tem que arrumar, arredondar os valores pra duas casas depois da virgula
+        foreach (int m in gastos.Keys.ToList())
+        {
+            gastos[m]= Mathf.Round(gastos[m] * 100f)/100f;
+            gIfCompra[m] = Mathf.Round(gIfCompra[m] * 100f) / 100f;
+            rendimentos[m] = Mathf.Round(rendimentos[m] * 100f) / 100f;
+        }
+
+            foreach (int m in gastos.Keys)
         {
             Debug.Log(
                 $"Mês {m} | " +
-                $"Gastos: R$ {gastos[m]:F2} | " +
-                $"Gastos + Compra: R$ {gIfCompra[m]:F2} | " +
-                $"Rendimentos: R$ {rendimentos[m]:F2}"
+                $"Gastos: R$ {gastos[m]} | " +
+                $"Gastos + Compra: R$ {gIfCompra[m]} | " +
+                $"Rendimentos: R$ {rendimentos[m]}"
             );
         }
+        container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
+        moduloInterface.CriarGraficoLinhaSimples(gastos,gIfCompra,rendimentos, "Simulação de suas Finanças Caso Compre o Item Desejado ao Longo das Parcelas");
+        HelperConfig.ConfigurarBtn(container.btnComprar,"Comprar", () => BtnComprarSim());
+
+
+    }
+
+    public void BtnComprarSim()
+    {
+        Comprar(itemSelecionado);
+        moduloInterface.OcultarJanela(menuCompraSim);
+        moduloInterface.OcultarJanela(menuCompraItem);
+
 
     }
 
 
+    public TextMeshProUGUI AtualizarPlayerInfos(TextMeshProUGUI info, int modo)
+    {
+        switch (modo)
+        {
+            case 0:
+                info.text = "$" + player.patrimonio;
+                break;
+                case 1:
+                info.text = disposicao.disposicao + "%";
+                break;
+
+        }
+        return info;
+    }
 
     public MenuCompraItem AtualizarPlayerInfosIC(MenuCompraItem container)
     {
@@ -330,6 +369,8 @@ public class ModuloLoja : MonoBehaviour
 
         return container;
     }
+
+
 
 }
 
