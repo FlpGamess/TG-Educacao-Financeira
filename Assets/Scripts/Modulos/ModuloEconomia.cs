@@ -211,26 +211,29 @@ public class ModuloEconomia : MonoBehaviour
         foreach (var banco in bancos)
         {
             if (banco.valorInvestido <= 0) continue;
-            banco.valorInvestido = CalcularInvestimento(banco.percentualCDI,banco.valorInvestido);
 
-            float TaxaBase = (banco.percentualCDI / 100f) * cdiSemanal;
-            float variacao = Random.Range(-banco.mudanca, banco.mudanca);
-            float taxaSemanal = Mathf.Max(TaxaBase + variacao, 0);
-            banco.valorInvestido *= (1 + taxaSemanal);
 
-            if(banco.taxaAd > 0)
-            {
-                banco.valorInvestido *= (1 - banco.taxaAd);
-            }
+            banco.valorInvestido = CalcularInvestimento(banco.percentualCDI,banco.valorInvestido,banco.mudanca, banco.taxaAd);
+
         }
 
         AtualizarUI();
     }
     
-    public float CalcularInvestimento(float percentualCDI, float valorInvestido)
+    public float CalcularInvestimento(float percentualCDI, float valorInvestido, float mudanca, float taxaAd)
     {
-        float taxaSemanal = (percentualCDI / 100f) * moduloRendimento.cdiSemanal;
-        return valorInvestido   * (1 + taxaSemanal);
+        //cdi normal
+        float taxaBase = (percentualCDI / 100f) * moduloRendimento.cdiSemanal;
+        //vaiação pro cdb
+        float variacao = Random.Range(-mudanca,mudanca);
+        //fundo de rendimento
+        float taxaSemanal = Mathf.Max(taxaBase + variacao,0);
+        float valorRendido = valorInvestido * (1 + taxaSemanal);
+        if (taxaAd > 0)
+        {
+            valorRendido  *= (1 - taxaAd);
+        }
+        return valorRendido;
     }
 
     public void Resgatar(DadosInvestimento banco, TMP_InputField inputResgate)

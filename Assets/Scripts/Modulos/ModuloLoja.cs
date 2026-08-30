@@ -267,23 +267,30 @@ public class ModuloLoja : MonoBehaviour
         Dictionary<int, float> rendimentos = new();
         Dictionary<int, float> saldo = new();
 
+
+
+
         for (int m = mes; m <= (mesfinal); m++) {
             gastos.Add(m, 0);
             gIfCompra.Add(m, 0);
             rendimentos.Add(m,modulorendimentos.salario);
+            //tem um bg
+            //como as variaveis são padrões elas nao guardam os diferentes valores
+            //basicamente esse codigo funciona pra rendimento unico + salario
+            //precisa adaptar para os 3 rendimentos agora
             foreach (var banco in moduloEconomia.bancos)
             {
                 if (banco.valorInvestido <= 0) continue;
                 if (m == mes)
                 {
-                    investidosimulado = moduloEconomia.CalcularInvestimento(banco.percentualCDI, banco.valorInvestido);
+                    investidosimulado = moduloEconomia.CalcularInvestimento(banco.percentualCDI, banco.valorInvestido, banco.mudanca, banco.taxaAd);
                     rendimentos[m] += (investidosimulado - banco.valorInvestido);
                     Debug.Log("Primeirinha "+investidosimulado);
                 }
                 else
                 {
                     
-                    float aux = moduloEconomia.CalcularInvestimento(banco.percentualCDI, investidosimulado);
+                    float aux = moduloEconomia.CalcularInvestimento(banco.percentualCDI, investidosimulado, banco.mudanca, banco.taxaAd);
                     rendimentos[m] += (aux - investidosimulado);
                     investidosimulado = aux;
                 }
