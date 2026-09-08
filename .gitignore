@@ -11,7 +11,6 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
-.vscode/
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -51,7 +50,6 @@ ExportedObj/
 .consulo/
 *.csproj
 *.unityproj
-*.slnx
 *.sln
 *.suo
 *.tmp
