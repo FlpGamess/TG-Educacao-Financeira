@@ -1,8 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class ModuloInterface : MonoBehaviour
 {
+    public Button btnHistorico;
     //recebe o objeto pai da interface(primeiro painel)
     public GameObject Interface;
     GameObject menuCelular;
@@ -15,12 +18,17 @@ public class ModuloInterface : MonoBehaviour
     //define menuCelular como o menu do MenuCelular sendo o menu padr�o
      menuCelular = Interface.transform.Find("MenuCelular").gameObject;
 
+         btnHistorico.onClick.AddListener(() => Debug.Log("OIA O BOTÃO"));
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Keyboard.current.iKey.wasPressedThisFrame)        
+        {
+            btnHistorico.onClick.Invoke();
+        }
     }
 
     //Fun��o para abrir janelas do Menu, recebe o obj da janela que quer abrir
