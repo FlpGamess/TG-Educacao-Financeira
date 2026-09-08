@@ -18,5 +18,5 @@ MonoBehaviour:
   Categoria: 4
   Tipo: "Divers\xE3o"
   efeito: 0
-  Duracao: -1
+  Duracao: 0
   QuantidadeMax: 1

@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     public int laz;
 
     [Header("Listas")]
-    public List<ItensComprados> Bens = new List<ItensComprados>();
+    public List<Itens> Bens = new List<Itens>();
 
     [Header("Listas2")]
     public List<Despesas> Dividas = new List<Despesas>();
@@ -77,9 +77,10 @@ public class Player : MonoBehaviour
 
     public void ProcessarCompra(Itens bem,Despesas despesa)
     {
-        Bens.Add(new ItensComprados(bem));
+        Bens.Add(bem);
         Dividas.Add(despesa);
         BensAtualizados.Invoke();
+
     }
 
     //deletar dps
@@ -95,38 +96,9 @@ public class Player : MonoBehaviour
 
     }
 
-    void OnEnable()
-    {
-        ModuloTempo.isSemanaAvancada += RetirarItemHistorico;
-    }
-
-    void OnDisable()
-    {
-        ModuloTempo.isSemanaAvancada -= RetirarItemHistorico;
-    }
-
     public void AlterarSaldoConta()
     {
         saldocontav.text = "$" + patrimonio.ToString("F2");
-    }
-
-    void RetirarItemHistorico()
-    {
-        for ( int i = Bens.Count - 1; i >= 0; i--)
-        {
-            if (Bens[i].DuracaoAtual == -1)
-            {
-                continue;
-            }
-            Bens[i].DuracaoAtual--;
-
-            if (Bens[i].DuracaoAtual <= 0)
-            {
-                Bens.RemoveAt(i);
-            }
-        }
-                BensAtualizados.Invoke();
-
     }
 
 
