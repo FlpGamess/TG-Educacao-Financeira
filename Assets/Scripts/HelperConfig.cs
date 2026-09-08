@@ -10,7 +10,11 @@ public class HelperConfig : MonoBehaviour
 public static GameObject ConfigurarBtn(GameObject botao, string texto, UnityAction action)
     {
         botao.GetComponentInChildren<TextMeshProUGUI>().text = texto;
-        botao.GetComponent<Button>().onClick.AddListener(action);
+        Button btn = botao.GetComponent<Button>();
+
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(action);
+        //botao.GetComponent<Button>().onClick.AddListener(action);
 
         return botao;
     }

@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using XCharts;
+using System.Linq;
+using XCharts.Runtime;
+using System.Reflection.Emit;
 
 public class ModuloInterface : MonoBehaviour
 {
@@ -12,6 +16,8 @@ public class ModuloInterface : MonoBehaviour
     //Lista que guarda todas as janelas que t�o abertas
     List<GameObject> janelasAbertas = new List<GameObject>();
     public ModuloLoja moduloloja;
+
+    public LineChart graficoLinhaSimples;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -87,6 +93,36 @@ public class ModuloInterface : MonoBehaviour
                 moduloloja.CarregarInterfaceCompra();
                 break;
         }
+
+    }
+
+    public void CriarGraficoLinhaSimples(Dictionary<int, float> gastos, Dictionary<int, float> gastosIfCompra, Dictionary<int, float> rendimentos,string titulo)
+    {
+        graficoLinhaSimples.RemoveData();
+        var title = graficoLinhaSimples.EnsureChartComponent<Title>();
+        title.text = titulo;
+        graficoLinhaSimples.AddSerie<Line>("Gastos");
+        graficoLinhaSimples.AddSerie<Line>("Gastos com Compra");
+        graficoLinhaSimples.AddSerie<Line>("Rendimentos");
+        var legenda = graficoLinhaSimples.EnsureChartComponent<Legend>();
+        var yAxis = graficoLinhaSimples.EnsureChartComponent<YAxis>();
+        yAxis.axisLabel.numericFormatter = "F2";
+        var tooltip = graficoLinhaSimples.EnsureChartComponent<Tooltip>();
+        tooltip.numericFormatter = "F2";
+        foreach (int mes in gastos.Keys.OrderBy(m => m))
+
+             {
+            graficoLinhaSimples.AddXAxisData("Mês" + mes);
+
+            graficoLinhaSimples.AddData(0, gastos[mes]);
+            graficoLinhaSimples.AddData(1, gastosIfCompra[mes]);
+            graficoLinhaSimples.AddData(2, rendimentos[mes]);
+
+
+
+
+        }
+       
 
     }
 
