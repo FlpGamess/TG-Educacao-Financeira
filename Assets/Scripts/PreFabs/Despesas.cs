@@ -24,10 +24,20 @@ public class Despesas
 
     public void GerarParcelas(float compra, int semana, int parcela)
     {
+         if (tipocompra == TipoPagamento.Cartão_Credito)
+        {
+            int semanaPGTO = semana - (semana % 4) +1;
+            if (semanaPGTO <= semana)
+            {
+                semanaPGTO += 4;
+            }
+            semana = semanaPGTO;
+        }    
         if (parcela == 0)
         {
             Parcela p = new Parcela(compra, semana);
             parcelas.Add(p);
+            Debug.Log($"[Cobrança]: Valor de {compra} agendado para a semana {semana}");
         }
         else if (parcela > 0)
         {
@@ -40,13 +50,15 @@ public class Despesas
                 {
                     vparcelado = vparcelado + (compra - tparcelado);
                 }
-                Parcela p = new Parcela(vparcelado, semana + 4);
+                Parcela p = new Parcela(vparcelado, semana);
                 parcelas.Add(p);
+                Debug.Log($"[Cobrança]: Parcela de {vparcelado} agendada para a semana {semana}");
                 semana += 4;
                
             }
         }
-    }
+       
+        }
 
 }
 

@@ -20,18 +20,18 @@ public class ModuloLoja : MonoBehaviour
     public GameObject menuCompraSim;
 
     [Header("Prefabs")]
-    //componente das celulas dos itens da loja que ficarão em lista
+    //componente das celulas dos itens da loja que ficarï¿½o em lista
     public CelulaItemLoja prefabCelulaItemLoja;
 
-    //componente de botão
+    //componente de botï¿½o
     public GameObject preFabBotao;
 
     [Header("Containers")]
-    //containers vulgo lugares onde vão ficar cada coisa
+    //containers vulgo lugares onde vï¿½o ficar cada coisa
     public Transform containerBotoes;
     public Transform containerItens;
 
-    [Header("Variaveis Seleção")]
+    [Header("Variaveis Seleï¿½ï¿½o")]
     //Categoria atual selecionada na loja
     public AtributosFinanceiros categoriaAtual;
     //Item selecionado pra compra
@@ -40,7 +40,7 @@ public class ModuloLoja : MonoBehaviour
     public CatalogoLoja catalogo;
 
     [Header("Listas")]
-    //lista dos botões da loja
+    //lista dos botï¿½es da loja
     List<GameObject> botoes = new List<GameObject>();
     //lista dos itens da loja
     List<CelulaItemLoja> itens = new List<CelulaItemLoja>();
@@ -76,21 +76,21 @@ public class ModuloLoja : MonoBehaviour
     public void CarregarLoja()
     {
         LimparCedulas();
-        //variavel que guarda o botão
+        //variavel que guarda o botï¿½o
         GameObject botao;
         //percorre os atributos financeiros chave a chave
         foreach (AtributosFinanceiros atb in Player.AtbFinanceiros.Keys)
         //foreach (KeyValuePair<AtributosFinanceiros, int> atb in Player.AtbFinanceiros)
         {
-            //cria um botão atraves do preFabBotao no containerBotoes
+            //cria um botï¿½o atraves do preFabBotao no containerBotoes
             botao = Instantiate(preFabBotao, containerBotoes);
-            //se a lista de botões da loja não tiver esse botão e ele existir
+            //se a lista de botï¿½es da loja nï¿½o tiver esse botï¿½o e ele existir
             if (!botoes.Contains(botao) && botao)
             {
-                //executa a configuração do botão mandando ele,o texto e a função
+                //executa a configuraï¿½ï¿½o do botï¿½o mandando ele,o texto e a funï¿½ï¿½o
                 botao = HelperConfig.ConfigurarBtn(botao, atb.ToString(),() => MudarCategoria(atb) );
                 //botao = HelperConfig.ConfigurarBtn(botao, atb.Key.ToString(), funcao67temporaria);               
-                //adiciona o botão na lista de botões
+                //adiciona o botï¿½o na lista de botï¿½es
                 botoes.Add(botao);
             }
         }
@@ -136,7 +136,7 @@ public class ModuloLoja : MonoBehaviour
 
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Nome";
         infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Nome;
-        infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Titulo.text = "Preço";
+        infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Titulo.text = "Preï¿½o";
         infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Informacao.text = $"R$ {itemSelecionado.Preco}";
 
         infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Tipo";
@@ -144,15 +144,18 @@ public class ModuloLoja : MonoBehaviour
         infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Titulo.text = "Categoria";
         infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Categoria.ToString();
 
-        infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Descrição";
+        infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Descriï¿½ï¿½o";
         infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Descricao;
 
-        InfoPag.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.AVista, TipoPagamento.Parcelado);
+        InfoPag.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.Pix, TipoPagamento.CartÃ£o_Credito);
         InfoPag.SetTooglesGroup(InfoPag.GetComponent<ToggleGroup>());
+        InfoPag.CartaoAparece(moduloEconomia.CartaoDeCredito());
         TipoPagamento opcaoPagamento = InfoPag.OpcaoMarcada();
 
         InfoPag.Opcao1.onValueChanged.AddListener ((valor) => AtualizarPagamento());
-        InfoPag.Opcao2.onValueChanged.AddListener ((valor) => AtualizarPagamento());
+        // InfoPag.Opcao2.onValueChanged.AddListener ((valor) => AtualizarPagamento());
+        InfoPag.Opcao3.onValueChanged.AddListener ((valor) => AtualizarPagamento());
+
 
         InfoParcel.ConfigurarDDPagamento(opcaoPagamento);
         FuncoesCompraItem = new UnityAction[] { () => Comprar(itemSelecionado), ()=> SimularCompra(itemSelecionado) };
@@ -161,15 +164,15 @@ public class ModuloLoja : MonoBehaviour
         //foreach (KeyValuePair<AtributosFinanceiros, int> atb in Player.AtbFinanceiros)
         {
 
-            //cria um botão atraves do preFabBotao no containerBotoes
+            //cria um botï¿½o atraves do preFabBotao no containerBotoes
             botao = Instantiate(preFabBotao, container.btnsContainer);
-            //se a lista de botões da loja não tiver esse botão e ele existir
+            //se a lista de botï¿½es da loja nï¿½o tiver esse botï¿½o e ele existir
             if (!container.Botoes.Contains(botao) && botao)
             {
-                //executa a configuração do botão mandando ele,o texto e a função
+                //executa a configuraï¿½ï¿½o do botï¿½o mandando ele,o texto e a funï¿½ï¿½o
                 botao = HelperConfig.ConfigurarBtn(botao, container.btnsTitulos[i], FuncoesCompraItem[i]);
                 //botao = HelperConfig.ConfigurarBtn(botao, atb.Key.ToString(), funcao67temporaria);               
-                //adiciona o botão na lista de botões
+                //adiciona o botï¿½o na lista de botï¿½es
                 container.Botoes.Add(botao);
             }
         }
@@ -182,8 +185,8 @@ public class ModuloLoja : MonoBehaviour
         List < (string, string) > infos = new List<(string, string)>
             {
                 ("Nome", itemSelecionado.Nome),
-                ("Descrição", itemSelecionado.Descricao),
-                ("Preço", $"R$ {itemSelecionado.Preco}"),
+                ("Descriï¿½ï¿½o", itemSelecionado.Descricao),
+                ("Preï¿½o", $"R$ {itemSelecionado.Preco}"),
                 ("Categoria", itemSelecionado.Categoria.ToString()),
                 ("Tipo", itemSelecionado.Tipo.ToString())
             };*/
@@ -216,7 +219,7 @@ public class ModuloLoja : MonoBehaviour
             Destroy(comp.gameObject);
         }
     }
-    //vou deletar isso no futuro, relaxa, é só pra aparecer uma mensagem pra entender que ta funcionando 
+    //vou deletar isso no futuro, relaxa, ï¿½ sï¿½ pra aparecer uma mensagem pra entender que ta funcionando 
     //o click no botao
     public void MudarCategoria(AtributosFinanceiros Categoria)
     {
@@ -275,7 +278,7 @@ public class ModuloLoja : MonoBehaviour
             gIfCompra.Add(m, 0);
             rendimentos.Add(m,modulorendimentos.salario);
             //tem um bg
-            //como as variaveis são padrões elas nao guardam os diferentes valores
+            //como as variaveis sï¿½o padrï¿½es elas nao guardam os diferentes valores
             //basicamente esse codigo funciona pra rendimento unico + salario
             //precisa adaptar para os 3 rendimentos agora
             foreach (var banco in moduloEconomia.bancos)
@@ -331,14 +334,14 @@ public class ModuloLoja : MonoBehaviour
             foreach (int m in gastos.Keys)
         {
             Debug.Log(
-                $"Mês {m} | " +
+                $"Mï¿½s {m} | " +
                 $"Gastos: R$ {gastos[m]} | " +
                 $"Gastos + Compra: R$ {gIfCompra[m]} | " +
                 $"Rendimentos: R$ {rendimentos[m]}"
             );
         }
         container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
-        moduloInterface.CriarGraficoLinhaSimples(gastos,gIfCompra,rendimentos, "Simulação de suas Finanças Caso Compre o Item Desejado ao Longo das Parcelas");
+        moduloInterface.CriarGraficoLinhaSimples(gastos,gIfCompra,rendimentos, "Simulaï¿½ï¿½o de suas Finanï¿½as Caso Compre o Item Desejado ao Longo das Parcelas");
         HelperConfig.ConfigurarBtn(container.btnComprar,"Comprar", () => BtnComprarSim());
 
 
