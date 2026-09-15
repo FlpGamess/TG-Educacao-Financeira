@@ -12735,7 +12735,7 @@ MonoBehaviour:
   laz: 0
   Bens: []
   Dividas: []
-  moduloTempo: {fileID: 0}
+  moduloTempo: {fileID: 1967107434}
   moduloRendimentos: {fileID: 1431202046}
   saldocontav: {fileID: 380908556}
   slot1: {fileID: 1006149166}

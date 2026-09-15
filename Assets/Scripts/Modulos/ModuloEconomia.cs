@@ -35,6 +35,10 @@ public class ModuloEconomia : MonoBehaviour
     public Button btnInvestimentos;
     private bool valorTot = false;
 
+    private int semanaLiberaInvest = -1;
+
+    private bool cartaoLib = false;
+
     private List<(DadosInvestimento banco, GameObject item)> itensInstanciados = new List<(DadosInvestimento, GameObject)>();
 
     public void OnEnable()
@@ -62,33 +66,51 @@ public class ModuloEconomia : MonoBehaviour
 
     public void DebitarDespesas()
     {
-        foreach (Despesas despesa in player.Dividas)
+        for (int i = player.Dividas.Count - 1; i>=0; i--)
         {
-                Parcela parcela = despesa.parcelas.FirstOrDefault();
-                if (parcela != null && parcela.semana == ModuloTempo.semana)
-                {
-                    player.DebitarPagamento(parcela.valor);
-                    despesa.parcelas.RemoveAt(0);
+            Despesas despesa = player.Dividas[i];
+            Parcela parcela = despesa.parcelas.FirstOrDefault();
+            if (parcela != null && parcela.semana == ModuloTempo.semana)
+            {
+                player.DebitarPagamento(parcela.valor);
+                despesa.parcelas.RemoveAt(0);
+                if (despesa.parcelas.Count == 0){
+                    despesa.isPaga = true;
+                    Debug.Log($"[Pagamento]: Despesa {despesa.item.Nome} paga");
                 }
-
+            }
         }
     }
+
 
     void TempoGravado()
 {
-    // Se estiver na semana 4, ele avalia e grava o resultado
-    if (ModuloTempo.semana % 4 == 0)
-    {
-        if (player.patrimonio >= 100)
+    if (semanaLiberaInvest == -1 && ModuloTempo.semana % 4 == 0 && player.patrimonio > 100){
+        semanaLiberaInvest = ModuloTempo.semana;
+    }
+
+    if  (player.patrimonio >= 100)
+        valorTot = true;
+    else
+        valorTot = false;
+
+    if ( semanaLiberaInvest != -1 && !cartaoLib){
+        int semanaCheck = semanaLiberaInvest +4;
+        if (ModuloTempo.semana >= semanaCheck && ModuloTempo.semana %4 == 0)
         {
-            valorTot = true;
-        }
-        else
-        {
-            valorTot = false;
+            float TotalInvs = 0f;
+            foreach (var banco in bancos)
+                TotalInvs += banco.valorInvestido;
+
+            if (valorTot && TotalInvs >= 100)
+                cartaoLib = true;
         }
     }
 }
+    public bool CartaoDeCredito()
+    {
+        return cartaoLib;
+    }
 
     void AtualizarVisibilidadeBotao()
     {

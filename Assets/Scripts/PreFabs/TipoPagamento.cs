@@ -2,8 +2,10 @@ using UnityEngine;
 
 public enum TipoPagamento
 {
-    AVista,
-    Parcelado
+    Pix,
+    // Pix_Parcelado,
+
+    Cartão_Credito,
 
 
 }
