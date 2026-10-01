@@ -264,26 +264,61 @@ public class ModuloLoja : MonoBehaviour
         //aqui depois vou dividir mais
         int mes = ((semana - 1) / 4) + 1;
         int mesfinal = mes + parcela;
-        float investidosimulado = 0;
+        
         Dictionary<int, float> gastos = new();
         Dictionary<int, float> gIfCompra = new();
         Dictionary<int, float> rendimentos = new();
         Dictionary<int, float> saldo = new();
 
+        List<float> investidosimulado = new();
 
+        foreach(var banco in moduloEconomia.bancos)
+        {
+            investidosimulado.Add(banco.valorInvestido);
+        }
 
 
         for (int m = mes; m <= (mesfinal); m++) {
             gastos.Add(m, 0);
             gIfCompra.Add(m, 0);
+
+
             rendimentos.Add(m,modulorendimentos.salario);
-            //tem um bg
-            //como as variaveis s�o padr�es elas nao guardam os diferentes valores
-            //basicamente esse codigo funciona pra rendimento unico + salario
-            //precisa adaptar para os 3 rendimentos agora
-            foreach (var banco in moduloEconomia.bancos)
+        
+
+            for (int i =0; i<moduloEconomia.bancos.Count; i++)
             {
+                var banco = moduloEconomia.bancos[i];
                 if (banco.valorInvestido <= 0) continue;
+
+                float valorAnterior = investidosimulado[i];
+
+                int semanasfaltantes;
+
+                if (m == mes)
+                {
+                    semanasfaltantes = 4 - ((semana - 1) % 4);
+                }
+                else
+                {
+                    semanasfaltantes = 4;
+                }
+
+                for (int s = 0; s < semanasfaltantes; s++)
+                {
+                    float valorAtual = moduloEconomia.CalcularInvestimento(banco.percentualCDI, valorAnterior, banco.mudanca, banco.taxaAd);
+
+                    valorAnterior = valorAtual;
+
+                }
+
+               
+
+                float ganho =  valorAnterior - investidosimulado[i];
+
+                rendimentos[m] += ganho;
+                investidosimulado[i] = valorAnterior;
+                /*
                 if (m == mes)
                 {
                     investidosimulado = moduloEconomia.CalcularInvestimento(banco.percentualCDI, banco.valorInvestido, banco.mudanca, banco.taxaAd);
@@ -296,7 +331,8 @@ public class ModuloLoja : MonoBehaviour
                     float aux = moduloEconomia.CalcularInvestimento(banco.percentualCDI, investidosimulado, banco.mudanca, banco.taxaAd);
                     rendimentos[m] += (aux - investidosimulado);
                     investidosimulado = aux;
-                }
+                    Debug.Log("tomi " + investidosimulado);
+                }*/
                 }
         }
 
