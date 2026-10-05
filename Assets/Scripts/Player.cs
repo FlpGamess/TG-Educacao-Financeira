@@ -57,7 +57,6 @@ public class Player : MonoBehaviour
     {
         patrimonio = moduloRendimentos.salario;
         AlterarSaldoConta();
-        ModuloTempo.isSemanaAvancada += AtualizarPatrimonio;
 
         slot1.sprite = spriteDesplar;
         slot2.sprite = spriteEduc;
@@ -68,11 +67,9 @@ public class Player : MonoBehaviour
 
     void AtualizarPatrimonio()
     {
-        if (ModuloTempo.semana > 1 &&(ModuloTempo.semana - 1) % 4 == 0)
-        {
             patrimonio += moduloRendimentos.salario;
             AlterarSaldoConta();
-        }
+        
     }
 
     public void ProcessarCompra(Itens bem,Despesas despesa)
@@ -98,16 +95,18 @@ public class Player : MonoBehaviour
     void OnEnable()
     {
         ModuloTempo.isSemanaAvancada += RetirarItemHistorico;
+        ModuloTempo.isMesAvancado += AtualizarPatrimonio;
     }
 
     void OnDisable()
     {
         ModuloTempo.isSemanaAvancada -= RetirarItemHistorico;
+        ModuloTempo.isMesAvancado -= AtualizarPatrimonio;
     }
 
     public void AlterarSaldoConta()
     {
-        saldocontav.text = "$" + patrimonio.ToString("F2");
+        ModuloInterface.AtualizarTxt(saldocontav, "$", patrimonio.ToString("F2"));
     }
 
     void RetirarItemHistorico()
@@ -127,6 +126,29 @@ public class Player : MonoBehaviour
         }
                 BensAtualizados.Invoke();
 
+    }
+
+    public List<ParcelaCalendario> FiltrarParcelasSemana(int semana)
+    {
+        List<ParcelaCalendario> parcelasf = new List<ParcelaCalendario>();
+
+        foreach (Despesas despesa in Dividas)
+        {
+            foreach(Parcela parcela in despesa.parcelas)
+            {
+                if(parcela.semana == semana)
+                {
+                    parcelasf.Add(
+                    new ParcelaCalendario(
+                        despesa.item.Nome,
+                        parcela.valor,
+                        despesa.categoria
+                    )
+                );
+                }
+            }
+        }
+        return parcelasf;
     }
 
 

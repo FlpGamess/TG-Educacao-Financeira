@@ -1,11 +1,12 @@
-using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
+using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using XCharts;
-using System.Linq;
 using XCharts.Runtime;
-using System.Reflection.Emit;
 
 public class ModuloInterface : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ModuloInterface : MonoBehaviour
     //Lista que guarda todas as janelas que t�o abertas
     List<GameObject> janelasAbertas = new List<GameObject>();
     public ModuloLoja moduloloja;
+    public MCalendario menucalendario;
 
     public LineChart graficoLinhaSimples;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -92,6 +94,9 @@ public class ModuloInterface : MonoBehaviour
                
                 moduloloja.CarregarInterfaceCompra();
                 break;
+            case "MenuCalendario":
+                menucalendario.CarregarMCalendario();
+                break;
         }
 
     }
@@ -125,6 +130,44 @@ public class ModuloInterface : MonoBehaviour
        
 
     }
+
+    /*MenuCalendario Re-padronização*/
+    public static void AtualizarTxt(TextMeshProUGUI componente, string texto, string valor)
+    {
+        componente.text = texto + valor;
+    }
+
+    public static void DefinirTamanhoMinimo(LayoutElement layout,float minw,float minh)
+    {
+        layout.minWidth = minw;
+        layout.minHeight = minh;
+    }
+
+    public static Color CoresAtributosFinanceiros(AtributosFinanceiros atributo)
+    {
+        switch (atributo)
+        {
+            case AtributosFinanceiros.DespesasDoLar:
+                return new Color32(255, 230, 150, 255);
+
+            case AtributosFinanceiros.Educacao:
+                return new Color32(170, 210, 245, 255);
+
+            case AtributosFinanceiros.Moradia:
+                return new Color32(220, 185, 160, 255);
+
+            case AtributosFinanceiros.SaudeBemEstar:
+                return new Color32(175, 225, 185, 255);
+
+            case AtributosFinanceiros.Lazer:
+                return new Color32(220, 185, 235, 255);
+
+            default:
+                return Color.white;
+        }
+    }
+
+
 
     public void FuncaoProvisoriaVouApagarDpsHomenagemACaioPrime()
     {
