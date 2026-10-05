@@ -73,6 +73,7 @@ public class ModuloEconomia : MonoBehaviour
             if (parcela != null && parcela.semana == ModuloTempo.semana)
             {
                 player.DebitarPagamento(parcela.valor);
+                player.RegistrarDespesaDebitada(despesa.categoria, parcela.valor);
                 despesa.parcelas.RemoveAt(0);
                 if (despesa.parcelas.Count == 0){
                     despesa.isPaga = true;
@@ -228,12 +229,15 @@ public class ModuloEconomia : MonoBehaviour
 
     void RenderInvestimentos()
     {
+        float valorini = 0f;
         foreach (var banco in bancos)
         {
             if (banco.valorInvestido <= 0) continue;
-
+            valorini = banco.valorInvestido;
             banco.valorInvestido = CalcularInvestimento(banco.percentualCDI,banco.valorInvestido,banco.mudanca, banco.taxaAd);
-
+            float valorf = banco.valorInvestido;
+            Debug.Log(valorini + " - " + valorf);
+            player.GanhoMensal += valorf -valorini;
         }
 
         AtualizarUI();
