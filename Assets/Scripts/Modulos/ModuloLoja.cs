@@ -133,19 +133,18 @@ public class ModuloLoja : MonoBehaviour
         container.saldoConta = AtualizarPlayerInfos(container.saldoConta,0);
         container.saldoDisposicao = AtualizarPlayerInfos(container.saldoDisposicao,1);
 
+        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo,"", "Nome");
+        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao,"", itemSelecionado.Nome);
+        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Titulo,"", "Pre�o");
+        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Informacao,"R$", itemSelecionado.Preco.ToString());
 
-        infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Nome";
-        infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Nome;
-        infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Titulo.text = "Pre�o";
-        infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Informacao.text = $"R$ {itemSelecionado.Preco}";
+        ModuloInterface.AtualizarTxt(infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Titulo, "", "Tipo");
+        ModuloInterface.AtualizarTxt(infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Informacao, "", itemSelecionado.Tipo);
+        ModuloInterface.AtualizarTxt(infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Titulo, "", "Categoria");
+        ModuloInterface.AtualizarTxt(infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Informacao, "R$", itemSelecionado.Categoria.ToString());
 
-        infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Tipo";
-        infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Tipo.ToString();
-        infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Titulo.text = "Categoria";
-        infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Categoria.ToString();
-
-        infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo.text = "Descri��o";
-        infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Informacao.text = itemSelecionado.Descricao;
+        ModuloInterface.AtualizarTxt(infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo, "", "Descri��o");
+        ModuloInterface.AtualizarTxt(infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Informacao, "", itemSelecionado.Descricao);
 
         InfoPag.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.Pix, TipoPagamento.Cartão_Credito);
         InfoPag.SetTooglesGroup(InfoPag.GetComponent<ToggleGroup>());
@@ -398,10 +397,10 @@ public class ModuloLoja : MonoBehaviour
         switch (modo)
         {
             case 0:
-                info.text = "$" + player.patrimonio;
+                ModuloInterface.AtualizarTxt(info, "$", player.patrimonio.ToString());
                 break;
                 case 1:
-                info.text = disposicao.disposicao + "%";
+                ModuloInterface.AtualizarTxt(info, disposicao.disposicao.ToString(), "%");
                 break;
 
         }
@@ -410,9 +409,8 @@ public class ModuloLoja : MonoBehaviour
 
     public MenuCompraItem AtualizarPlayerInfosIC(MenuCompraItem container)
     {
-        container.saldoConta.text = "$" + player.patrimonio;
-        container.saldoDisposicao.text = disposicao.disposicao + "%";
-
+        ModuloInterface.AtualizarTxt(container.saldoConta, "$", player.patrimonio.ToString());
+        ModuloInterface.AtualizarTxt(container.saldoDisposicao, disposicao.disposicao.ToString(), "%");
         return container;
     }
 

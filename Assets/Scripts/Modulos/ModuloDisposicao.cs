@@ -77,6 +77,7 @@ public class ModuloDisposicao : MonoBehaviour
     }
     public void AlterarDisposicao()
     {
-        disposicaov.text = disposicao.ToString() + "%";
+        ModuloInterface.AtualizarTxt(disposicaov, disposicao.ToString(), "%");
+       
     }
 }

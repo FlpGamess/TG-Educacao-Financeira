@@ -85,7 +85,7 @@ public class ModuloEconomia : MonoBehaviour
 
     void TempoGravado()
 {
-    if (semanaLiberaInvest == -1 && ModuloTempo.semana % 4 == 0 && player.patrimonio > 100){
+    if (semanaLiberaInvest == -1 && ModuloTempo.fimMes && player.patrimonio > 100){
         semanaLiberaInvest = ModuloTempo.semana;
     }
 
@@ -96,7 +96,7 @@ public class ModuloEconomia : MonoBehaviour
 
     if ( semanaLiberaInvest != -1 && !cartaoLib){
         int semanaCheck = semanaLiberaInvest +4;
-        if (ModuloTempo.semana >= semanaCheck && ModuloTempo.semana %4 == 0)
+        if (ModuloTempo.semana >= semanaCheck && ModuloTempo.fimMes)
         {
             float TotalInvs = 0f;
             foreach (var banco in bancos)
@@ -128,8 +128,8 @@ public class ModuloEconomia : MonoBehaviour
             GameObject item = Instantiate(prefabItemInvestimento, content);
             itensInstanciados.Add((banco, item));
 
-            item.transform.Find("PainelTexto/TextoNome").GetComponent<TextMeshProUGUI>().text = $"{banco.tipo}: {banco.percentualCDI}%";
-            item.transform.Find("PainelTexto/TextoDescricao").GetComponent<TextMeshProUGUI>().text = banco.descricao;
+            ModuloInterface.AtualizarTxt(item.transform.Find("PainelTexto/TextoNome").GetComponent<TextMeshProUGUI>(), "", $"{banco.tipo}: {banco.percentualCDI}%");
+            ModuloInterface.AtualizarTxt(item.transform.Find("PainelTexto/TextoDescricao").GetComponent<TextMeshProUGUI>(), "", banco.descricao);
 
             TMP_InputField inputInvestir = item.transform.Find("PainelValor/LinhaInvestir/inputInvestir").GetComponent<TMP_InputField>();
             TMP_InputField inputResgate = item.transform.Find("PainelValor/LinhaResgatar/inputResgate").GetComponent<TMP_InputField>();
@@ -187,32 +187,30 @@ public class ModuloEconomia : MonoBehaviour
     {
         foreach (var par in itensInstanciados)
         {
-            var textoValor = par.item.transform.Find("PainelTexto/TextoValor").GetComponent<TextMeshProUGUI>();
-            textoValor.text = "Investido: R$" + par.banco.valorInvestido.ToString("F2");
-
+            ModuloInterface.AtualizarTxt(par.item.transform.Find("PainelTexto/TextoValor").GetComponent<TextMeshProUGUI>(), "Investido: R$", par.banco.valorInvestido.ToString("F2"));
             var textoDescricao = par.item.transform.Find("PainelTexto/TextoDescricao").GetComponent<TextMeshProUGUI>();
 
             if (par.banco.tipo == TipoInvestimento.Poupanca && par.banco.valorInvestido > 0 && !PodeResgatar(par.banco))
             {
                 int semanaFaltando = 4 - (ModuloTempo.semana - par.banco.semanaInvestimento);
-                textoDescricao.text = $"Resgatar agora perde o rendimento! Faltam {semanaFaltando} semana(s) para resgate sem perdas.";
+                ModuloInterface.AtualizarTxt(textoDescricao, "", $"Resgatar agora perde o rendimento! Faltam {semanaFaltando} semana(s) para resgate sem perdas.");
                 textoDescricao.color = Color.yellow;
             }
 
             else if (par.banco.tipo == TipoInvestimento.CDB && par.banco.valorInvestido > 0)
             {
                 float aliquota = CalcularAliquotaIR(par.banco) * 100f;
-                textoDescricao.text = $"Imposto de Renda atual sobre o lucro: {aliquota}%. Quanto mais tempo investido, menor o imposto.";
+                ModuloInterface.AtualizarTxt(textoDescricao, "", $"Imposto de Renda atual sobre o lucro: {aliquota}%. Quanto mais tempo investido, menor o imposto.");
                 textoDescricao.color = Color.yellow;
             }
 
             else if (par.banco.tipo == TipoInvestimento.Fundos && par.banco.taxaAd > 0 && par.banco.valorInvestido > 0)
             {
-                textoDescricao.text = $"Taxa de administracao: {(par.banco.taxaAd * 100f):F2}% ao mes, descontada do rendimento.";
+                ModuloInterface.AtualizarTxt(textoDescricao, "", $"Taxa de administracao: {(par.banco.taxaAd * 100f):F2}% ao mes, descontada do rendimento.");
                 textoDescricao.color = Color.yellow;
             }            else
             {
-                textoDescricao.text = par.banco.descricao;
+                ModuloInterface.AtualizarTxt(textoDescricao, "", par.banco.descricao);
                 textoDescricao.color = Color.white;
             }
 
@@ -233,7 +231,6 @@ public class ModuloEconomia : MonoBehaviour
         foreach (var banco in bancos)
         {
             if (banco.valorInvestido <= 0) continue;
-
 
             banco.valorInvestido = CalcularInvestimento(banco.percentualCDI,banco.valorInvestido,banco.mudanca, banco.taxaAd);
 

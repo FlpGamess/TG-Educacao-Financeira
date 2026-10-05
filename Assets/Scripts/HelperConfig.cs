@@ -9,7 +9,7 @@ public class HelperConfig : MonoBehaviour
 {
 public static GameObject ConfigurarBtn(GameObject botao, string texto, UnityAction action)
     {
-        botao.GetComponentInChildren<TextMeshProUGUI>().text = texto;
+        ModuloInterface.AtualizarTxt(botao.GetComponentInChildren<TextMeshProUGUI>(), "", texto);
         Button btn = botao.GetComponent<Button>();
 
         btn.onClick.RemoveAllListeners();
@@ -21,17 +21,17 @@ public static GameObject ConfigurarBtn(GameObject botao, string texto, UnityActi
 
     public static CelulaItemLoja ConfigurarCedulaItem(CelulaItemLoja cedula, Itens item,UnityAction funcaobtn)
     {
-        cedula.nome.text = item.Nome;
-        cedula.preco.text = "R$" + item.Preco.ToString();
-        cedula.descricao.text = item.Descricao;
+        ModuloInterface.AtualizarTxt(cedula.nome,"", item.Nome);
+        ModuloInterface.AtualizarTxt(cedula.preco, "R$", item.Preco.ToString());
+        ModuloInterface.AtualizarTxt(cedula.descricao,"", item.Descricao);
         cedula.btnComprar = HelperConfig.ConfigurarBtn(cedula.btnComprar, "Comprar", funcaobtn);
         return cedula;
     }
 
     public static CelulaCompra ConfigurarCedulaCompra(CelulaCompra cedula, (string titulo, string valor) item)
     {
-        cedula.Titulo.text = item.titulo;
-        cedula.Informacao.text = item.valor;
+        ModuloInterface.AtualizarTxt(cedula.Titulo, "", item.titulo);
+        ModuloInterface.AtualizarTxt(cedula.Informacao, "", item.valor);
         return cedula;
     }
 

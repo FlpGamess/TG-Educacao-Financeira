@@ -24,14 +24,22 @@ public class Despesas
 
     public void GerarParcelas(float compra, int semana, int parcela)
     {
-         if (tipocompra == TipoPagamento.Cartão_Credito)
+        juros = tipocompra == TipoPagamento.Cartão_Credito && parcela >= 4 ? 0.05f : 0f;
+
+        float total = Mathf.Round((compra + (compra * juros)) * 100f) / 100f;
+        this.valor = total;
+        if (tipocompra == TipoPagamento.Cartão_Credito)
         {
+            //codigo para todas as parcelas do cartão vencerem na primeir a semana de cada mes
+            //comentado pra utilização do calendario ja que a abordagem dos pagamentos foi simplificada
+            /*
             int semanaPGTO = semana - (semana % 4) +1;
             if (semanaPGTO <= semana)
             {
                 semanaPGTO += 4;
             }
-            semana = semanaPGTO;
+            semana += semanaPGTO;*/
+            semana += 4;
         }    
         if (parcela == 0)
         {
@@ -42,7 +50,7 @@ public class Despesas
         else if (parcela > 0)
         {
             float tparcelado = 0;
-            float vparcelado = Mathf.Round( (compra / parcela)*100f)/100f;
+            float vparcelado = Mathf.Round((total / parcela) * 100f) / 100f;
             for (int i = 0; i < parcela; i++)
             {
                 tparcelado += vparcelado;
