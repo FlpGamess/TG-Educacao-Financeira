@@ -47,6 +47,9 @@ public class Player : MonoBehaviour
     [Header("Listas2")]
     public List<Despesas> Dividas = new List<Despesas>();
 
+
+    public List<PagamentoRealizado> HistoricoPagamentos = new List<PagamentoRealizado>();
+
     [Header("Modulos")]
     public ModuloTempo moduloTempo;
     public ModuloRendimentos moduloRendimentos;

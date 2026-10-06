@@ -74,6 +74,7 @@ public class ModuloEconomia : MonoBehaviour
             {
                 player.DebitarPagamento(parcela.valor);
                 player.RegistrarDespesaDebitada(despesa.categoria, parcela.valor);
+                player.HistoricoPagamentos.Add(new PagamentoRealizado(despesa.item.Nome, parcela.valor,parcela.semana,parcela.numero,despesa.categoria,despesa.tipocompra));
                 despesa.parcelas.RemoveAt(0);
                 if (despesa.parcelas.Count == 0){
                     despesa.isPaga = true;

@@ -43,7 +43,7 @@ public class Despesas
         }    
         if (parcela == 0)
         {
-            Parcela p = new Parcela(compra, semana);
+            Parcela p = new Parcela(compra, semana,1);
             parcelas.Add(p);
             Debug.Log($"[Cobrança]: Valor de {compra} agendado para a semana {semana}");
         }
@@ -58,7 +58,7 @@ public class Despesas
                 {
                     vparcelado = vparcelado + (compra - tparcelado);
                 }
-                Parcela p = new Parcela(vparcelado, semana);
+                Parcela p = new Parcela(vparcelado, semana,i+1);
                 parcelas.Add(p);
                 Debug.Log($"[Cobrança]: Parcela de {vparcelado} agendada para a semana {semana}");
                 semana += 4;
