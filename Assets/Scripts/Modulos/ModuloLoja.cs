@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 //using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.UI;
+using XCharts.Runtime;
 using static System.Net.Mime.MediaTypeNames;
 using static UnityEditor.PlayerSettings;
 //classe da loja do jogo
@@ -23,6 +24,7 @@ public class ModuloLoja : MonoBehaviour
     //componente das celulas dos itens da loja que ficar�o em lista
     public CelulaItemLoja prefabCelulaItemLoja;
 
+    public LineChart graficoLinhaSimples;
     //componente de bot�o
     public GameObject preFabBotao;
 
@@ -375,8 +377,13 @@ public class ModuloLoja : MonoBehaviour
                 $"Rendimentos: R$ {rendimentos[m]}"
             );
         }
+        var series = new Dictionary<string, Dictionary<int, float>> {
+                {"Gastos",gastos },
+                {"Gastos com Compra", gIfCompra },
+                {"Rendimentos", rendimentos }
+            };
         container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
-        moduloInterface.CriarGraficoLinhaSimples(gastos,gIfCompra,rendimentos, "Simula��o de suas Finan�as Caso Compre o Item Desejado ao Longo das Parcelas");
+        moduloInterface.CriarGraficoLinhaSimples(graficoLinhaSimples,series, "Simula��o de suas Finan�as Caso Compre o Item Desejado ao Longo das Parcelas");
         HelperConfig.ConfigurarBtn(container.btnComprar,"Comprar", () => BtnComprarSim());
 
 

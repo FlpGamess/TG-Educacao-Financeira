@@ -20,4 +20,6 @@ public class Itens : ScriptableObject
     //quantidade maxima que um item pode ser obtido
     public int QuantidadeMax;
 
+    public TipoDespesa TipoDespesa;
+
 }

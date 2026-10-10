@@ -20,7 +20,7 @@ public class ModuloInterface : MonoBehaviour
     public MCalendario menucalendario;
     public MHistorico menuhistorico;
 
-    public LineChart graficoLinhaSimples;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -104,32 +104,37 @@ public class ModuloInterface : MonoBehaviour
         }
 
     }
-
-    public void CriarGraficoLinhaSimples(Dictionary<int, float> gastos, Dictionary<int, float> gastosIfCompra, Dictionary<int, float> rendimentos,string titulo)
+    public void CriarGraficoLinhaSimples(LineChart grafico, Dictionary<string, Dictionary<int,float>> series,string titulo)
     {
-        graficoLinhaSimples.RemoveData();
-        var title = graficoLinhaSimples.EnsureChartComponent<Title>();
-        title.text = titulo;
-        graficoLinhaSimples.AddSerie<Line>("Gastos");
-        graficoLinhaSimples.AddSerie<Line>("Gastos com Compra");
-        graficoLinhaSimples.AddSerie<Line>("Rendimentos");
-        var legenda = graficoLinhaSimples.EnsureChartComponent<Legend>();
-        var yAxis = graficoLinhaSimples.EnsureChartComponent<YAxis>();
-        yAxis.axisLabel.numericFormatter = "F2";
-        var tooltip = graficoLinhaSimples.EnsureChartComponent<Tooltip>();
-        tooltip.numericFormatter = "F2";
-        foreach (int mes in gastos.Keys.OrderBy(m => m))
+      grafico.RemoveData();
+       grafico.EnsureChartComponent<Title>().text = titulo;
+       grafico.EnsureChartComponent<Legend>();
+       grafico.EnsureChartComponent<YAxis>().axisLabel.numericFormatter = "F2";
+       grafico.EnsureChartComponent<Tooltip>().numericFormatter = "F2";
+        foreach(var serie in series)
+        {
+            grafico.AddSerie<Line>(serie.Key);
+        }
+        if(series.Count ==0)
+            return;
 
-             {
-            graficoLinhaSimples.AddXAxisData("Mês" + mes);
+        List<int> meses = series.First().Value.Keys.OrderBy(m=>m).ToList();
+       foreach( var mes in meses)
+        {
+            grafico.AddXAxisData("Mês" + mes);
+            int indice = 0;
+            foreach (var serie in series)
+            {
+                float valor = serie.Value.TryGetValue(mes, out float v) ? v : 0f;
+                grafico.AddData(indice, valor);
+                indice++;
+            }
+        }
+        
 
-            graficoLinhaSimples.AddData(0, gastos[mes]);
-            graficoLinhaSimples.AddData(1, gastosIfCompra[mes]);
-            graficoLinhaSimples.AddData(2, rendimentos[mes]);
 
-        }  
     }
-
+  
     public void CriarGraficoBarraStLinha(BaseChart grafico, List<int> meses, Dictionary<AtributosFinanceiros, Dictionary<int, float>> gastos, Dictionary<int, float> ganhos, string titulo)
     {
         grafico.RemoveData();
