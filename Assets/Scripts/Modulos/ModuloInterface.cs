@@ -18,6 +18,7 @@ public class ModuloInterface : MonoBehaviour
     List<GameObject> janelasAbertas = new List<GameObject>();
     public ModuloLoja moduloloja;
     public MCalendario menucalendario;
+    public MHistorico menuhistorico;
 
     public LineChart graficoLinhaSimples;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -97,6 +98,9 @@ public class ModuloInterface : MonoBehaviour
             case "MenuCalendario":
                 menucalendario.CarregarMCalendario();
                 break;
+            case "MenuHistorico":
+                menuhistorico.CarregarHistorico();
+                break;
         }
 
     }
@@ -123,12 +127,38 @@ public class ModuloInterface : MonoBehaviour
             graficoLinhaSimples.AddData(1, gastosIfCompra[mes]);
             graficoLinhaSimples.AddData(2, rendimentos[mes]);
 
+        }  
+    }
 
+    public void CriarGraficoBarraStLinha(BaseChart grafico, List<int> meses, Dictionary<AtributosFinanceiros, Dictionary<int, float>> gastos, Dictionary<int, float> ganhos, string titulo)
+    {
+        grafico.RemoveData();
+        grafico.EnsureChartComponent<Title>().text = titulo;
+        grafico.EnsureChartComponent<Legend>();
+        grafico.EnsureChartComponent<YAxis>().axisLabel.numericFormatter = "F2";
+        grafico.EnsureChartComponent<Tooltip>().numericFormatter = "F2";
 
-
+        foreach (var categoria in gastos)
+        {
+            var barra = grafico.AddSerie<Bar>(categoria.Key.ToString());
+            barra.stack = "Gastos";
+            foreach (int mes in meses)
+            {
+                float valor = categoria.Value.TryGetValue(mes, out float v)?v: 0f;
+                grafico.AddData(grafico.series.Count - 1, valor);
+            }
         }
-       
+        grafico.AddSerie<Line>("Ganhos");
 
+        foreach(int mes in meses)
+        {
+            float valor = ganhos.TryGetValue(mes,out float v)?v: 0f;
+            grafico.AddData(grafico.series.Count-1, valor);
+        }
+        foreach(int mes in meses)
+        {
+            grafico.AddXAxisData("Mês" + mes);
+        }
     }
 
     /*MenuCalendario Re-padronização*/
