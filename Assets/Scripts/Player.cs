@@ -47,6 +47,10 @@ public class Player : MonoBehaviour
     [Header("Listas2")]
     public List<Despesas> Dividas = new List<Despesas>();
 
+
+    public List<PagamentoRealizado> HistoricoPagamentos = new List<PagamentoRealizado>();
+    public Dictionary<int,float> HistoricoGanhos = new Dictionary<int,float>();
+
     [Header("Modulos")]
     public ModuloTempo moduloTempo;
     public ModuloRendimentos moduloRendimentos;
@@ -116,6 +120,7 @@ public class Player : MonoBehaviour
         ModuloTempo.isMesAvancado += AtualizarGanhoMensal;
         ModuloTempo.isMesAvancado += AtualizarPatrimonio;
         ModuloTempo.isMesAvancado += AtualizarAtributosEconomicos;
+        ModuloTempo.isMesAvancado += RegistrarGanhosAnteriores;
 
     }
 
@@ -125,6 +130,7 @@ public class Player : MonoBehaviour
         ModuloTempo.isMesAvancado -= AtualizarGanhoMensal;
         ModuloTempo.isMesAvancado -= AtualizarPatrimonio;
         ModuloTempo.isMesAvancado -= AtualizarAtributosEconomicos;
+        ModuloTempo.isMesAvancado -= RegistrarGanhosAnteriores;
     }
 
     void AtualizarGanhoMensal()
@@ -132,6 +138,12 @@ public class Player : MonoBehaviour
         GanhoAnterior = GanhoMensal;
         GanhoMensal = 0f;
     }
+
+    public void RegistrarGanhosAnteriores()
+    {
+        HistoricoGanhos.Add(ModuloTempo.mes-1, GanhoAnterior);
+    }
+  
     public void AlterarSaldoConta()
     {
         ModuloInterface.AtualizarTxt(saldocontav, "$", patrimonio.ToString("F2"));
