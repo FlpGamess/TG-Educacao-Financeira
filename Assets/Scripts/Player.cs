@@ -105,11 +105,10 @@ public class Player : MonoBehaviour
     public void DebitarPagamento(float preco)
     {
 
-        if (patrimonio-preco >= 0)
-        {
+      
             patrimonio -= preco;
             AlterarSaldoConta();
-        }
+      
         return;
 
     }

@@ -12,6 +12,7 @@ public class MHistorico : MonoBehaviour
     public ModuloInterface modulointerface;
     public List<PagamentoRealizadoBloco> blocosCriados = new List<PagamentoRealizadoBloco>();
     public BaseChart graficoGG;
+    public LineChart graficoLP;
 
     public void CarregarHistorico()
     {
@@ -34,6 +35,7 @@ public class MHistorico : MonoBehaviour
             blocosCriados.Add(bloco);
         }
         ManipularGraficoGG();
+        ManipularLp();
     }
   
     public void ManipularGraficoGG()
@@ -69,6 +71,35 @@ public class MHistorico : MonoBehaviour
         modulointerface.CriarGraficoBarraStLinha(graficoGG,meses,gastostotal,ganhostotais,"Historico da Conta nos Ultimos 3 Meses");
 
     }
+
+    public void ManipularLp()
+    {
+        int mesFinal = ModuloTempo.mes - 1;
+        int mesInicial = Mathf.Max(1, mesFinal - 2);
+
+        Dictionary<int,float> saldoMensal = new Dictionary<int,float>();
+
+        for (int m = mesInicial;m <= mesFinal; m++)
+        {
+            float ganhos = player.HistoricoGanhos.TryGetValue(m, out float g) ? g:0f;
+            float gastos = 0f;
+            foreach (PagamentoRealizado pagamento in player.HistoricoPagamentos)
+            {
+                int mesPagamento = ((pagamento.semana - 1) / 4) + 1;
+                if (mesPagamento == m)
+                    gastos += pagamento.valor;
+            }
+            saldoMensal[m] = ganhos - gastos;
+        }
+        var series = new Dictionary<string, Dictionary<int, float>> {
+                {"Saldo Mensal",saldoMensal },
+            };
+
+        modulointerface.CriarGraficoLinhaSimples(graficoLP, series,"Ganho - Gastos Mensal");
+
+    }
+
+   
 
     public void LimparBlocos()
     {
