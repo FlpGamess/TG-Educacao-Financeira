@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEditor.Progress;
 
@@ -14,11 +15,12 @@ public class CatalogoLoja : MonoBehaviour
         {AtributosFinanceiros.SaudeBemEstar,new List<Itens>()},
         {AtributosFinanceiros.Educacao,new List<Itens>()}
     };
+    public Player player;
 
 
     void Start()
     {
-        CarregarCatalogo();
+        CarregarCatalogo(player.Bens);
     }
 
     // Update is called once per frame
@@ -27,7 +29,7 @@ public class CatalogoLoja : MonoBehaviour
         
     }
 
-    public void CarregarCatalogo()
+    public void CarregarCatalogo(List<ItensComprados> bens)
     {
         LimparListas();
 
@@ -40,6 +42,9 @@ public class CatalogoLoja : MonoBehaviour
 
         foreach(Itens it in itens)
         {
+            if (bens.Count(bens => bens.dados.Nome == it.Nome) == it.QuantidadeMax){
+                continue;
+            }
             catalogo[it.Categoria].Add(it);
         }
     }

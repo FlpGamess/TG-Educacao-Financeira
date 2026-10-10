@@ -96,7 +96,7 @@ public class ModuloLoja : MonoBehaviour
                 botoes.Add(botao);
             }
         }
-        catalogo.CarregarCatalogo();
+        catalogo.CarregarCatalogo(player.Bens);
         foreach (Itens item in catalogo.catalogo[categoriaAtual])
         {
             // Debug.Log(item);
