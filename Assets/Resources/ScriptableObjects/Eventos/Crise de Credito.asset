@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44e5e0635baba342943abcf3f3f69cd, type: 3}
+  m_Name: Crise de Credito
+  m_EditorClassIdentifier: Assembly-CSharp::Eventos
+  id: 14
+  nome: Crise de Credito
+  descricao: "Muitas empresas est\xE3o declarando altas dividas no credito"
+  gatilho: 0300000002000000
+  tipo: 1
+  decisao: 0
+  opcao1: Fechar
+  opcao2: 
+  ativacao: 0
+  afetados:
+  - tipo: 3
+    nome: CDB
+    tipobonus: 3
+    bonus: -0.5
+  - tipo: 3
+    nome: Fundos
+    tipobonus: 3
+    bonus: -0.8
+  duracao: 8

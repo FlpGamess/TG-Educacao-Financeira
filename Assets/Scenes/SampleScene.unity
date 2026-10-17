@@ -5840,7 +5840,10 @@ MonoBehaviour:
   historicoContainer: {fileID: 756720151}
   blocoHistoricoPreFab: {fileID: 6127042986877906595, guid: 0e8a33419f8c19e4798c9d7566c11413, type: 3}
   player: {fileID: 1431202042}
+  modulointerface: {fileID: 0}
   blocosCriados: []
+  graficoGG: {fileID: 1299081126}
+  graficoLP: {fileID: 0}
 --- !u!1 &353129099
 GameObject:
   m_ObjectHideFlags: 0
@@ -7114,6 +7117,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 436710282}
   m_CullTransparentMesh: 1
+--- !u!1 &453879884
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 453879886}
+  - component: {fileID: 453879885}
+  m_Layer: 0
+  m_Name: EventosAleatorios
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &453879885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 453879884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 267616ea5f6593741943ffd43e439505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ModuloEventosAleatorios
+  listaEventos: []
+  eventosAtivos: []
+  modulointerface: {fileID: 1034595230}
+  btn: {fileID: 0}
+  player: {fileID: 1431202042}
+  catalogoloja: {fileID: 1769075945}
+  chance: 0.4
+--- !u!4 &453879886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 453879884}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 798.4633, y: 573.4129, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &454123194
 GameObject:
   m_ObjectHideFlags: 0
@@ -16886,7 +16940,9 @@ MonoBehaviour:
   moduloloja: {fileID: 1769075943}
   menucalendario: {fileID: 1542799138}
   menuhistorico: {fileID: 350108083}
-  graficoLinhaSimples: {fileID: 799751012}
+  prefabPopUp: {fileID: 8664822111786208371, guid: 713a9c739176a3341bac6113fc2d2446, type: 3}
+  painelprincipal: {fileID: 215328145}
+  prefabBotao: {fileID: 5309035892793537267, guid: 41216b2541ad3e940a91ab9ac13eb38f, type: 3}
 --- !u!1 &1036321605
 GameObject:
   m_ObjectHideFlags: 0
@@ -17021,7 +17077,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Semana:1
+  m_text: Semana:X
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -21199,7 +21255,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 5.9581, y: -0.0014992}
+  m_AnchoredPosition: {x: 5.9399, y: 498}
   m_SizeDelta: {x: 1104.9, y: 440.59}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1299081126
@@ -24592,6 +24648,7 @@ MonoBehaviour:
   HistoricoPagamentos: []
   moduloTempo: {fileID: 1967107434}
   moduloRendimentos: {fileID: 1431202046}
+  moduloEventosA: {fileID: 453879885}
   saldocontav: {fileID: 380908556}
   slot1: {fileID: 1006149166}
   slot2: {fileID: 1285076984}
@@ -24632,6 +24689,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuloDisposicao
   disposicao: 100
   disposicaov: {fileID: 1540358175}
+  moduloEventosA: {fileID: 453879885}
 --- !u!114 &1431202045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29900,6 +29958,7 @@ MonoBehaviour:
   menuCompraItem: {fileID: 269588839}
   menuCompraSim: {fileID: 1191693280}
   prefabCelulaItemLoja: {fileID: 7681259208182552112, guid: 0afe106e550b2d04ea1a846479b3d937, type: 3}
+  graficoLinhaSimples: {fileID: 799751012}
   preFabBotao: {fileID: 5309035892793537267, guid: 41216b2541ad3e940a91ab9ac13eb38f, type: 3}
   containerBotoes: {fileID: 348685778}
   containerItens: {fileID: 1713730850}
@@ -29912,6 +29971,7 @@ MonoBehaviour:
   tempo: {fileID: 1967107434}
   modulorendimentos: {fileID: 1431202046}
   moduloEconomia: {fileID: 1431202045}
+  moduloEventosA: {fileID: 453879885}
   InfoPag: {fileID: 0}
   InfoParcel: {fileID: 0}
 --- !u!4 &1769075944
@@ -29942,6 +30002,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CatalogoLoja
   itens: []
+  player: {fileID: 1431202042}
+  moduloEventosA: {fileID: 453879885}
 --- !u!1 &1770219641
 GameObject:
   m_ObjectHideFlags: 0
@@ -32159,6 +32221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModuloTempo
   semanav: {fileID: 1038539884}
+  moduloEventos: {fileID: 453879885}
 --- !u!4 &1967107435
 Transform:
   m_ObjectHideFlags: 0
@@ -34345,3 +34408,4 @@ SceneRoots:
   - {fileID: 1769075944}
   - {fileID: 1431202043}
   - {fileID: 1967107435}
+  - {fileID: 453879886}

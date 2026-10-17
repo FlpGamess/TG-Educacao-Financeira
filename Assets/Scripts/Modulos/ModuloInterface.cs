@@ -19,6 +19,10 @@ public class ModuloInterface : MonoBehaviour
     public ModuloLoja moduloloja;
     public MCalendario menucalendario;
     public MHistorico menuhistorico;
+    public ModuloEconomia menuinvestimentos;
+    public PopUp prefabPopUp;
+    public Transform painelprincipal;
+    public GameObject prefabBotao;
 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -101,6 +105,57 @@ public class ModuloInterface : MonoBehaviour
             case "MenuHistorico":
                 menuhistorico.CarregarHistorico();
                 break;
+            case "PainelInvestimentos":
+                menuinvestimentos.MontarLista();
+                break;
+        }
+
+    }
+
+    public void GerarEventosPopUp(Eventos evento, System.Action[] funcoes, string[] opcoes)
+    {
+        PopUp popup = Instantiate(prefabPopUp, painelprincipal).GetComponent<PopUp>();
+        AtualizarTxt(popup.nome, evento.nome,"");
+        AtualizarTxt(popup.descricao, "descrição: ", evento.descricao);
+
+        for (int i = 0; i < funcoes.Length; i++)
+        {
+            GameObject botao = Instantiate(prefabBotao, popup.btncontainer);
+            Button componenteBotao = botao.GetComponent<Button>();
+
+            System.Action funcao = funcoes[i];
+
+            componenteBotao.onClick.AddListener(() =>
+            {
+                funcao?.Invoke();
+                ReiniciarJanelas();
+                Destroy(popup.gameObject);
+            });
+            AtualizarTxt(botao.GetComponentInChildren<TextMeshProUGUI>(), "", opcoes[i]);
+            popup.btns.Add(componenteBotao);
+        }
+
+    }
+
+    public void ReiniciarJanelas()
+    {
+        GameObject jinvestimentos = janelasAbertas.Find(j => j.name == "PainelInvestimentos");
+        GameObject jcompra = janelasAbertas.Find(j => j.name == "MenuCompraItem");
+
+        if (jinvestimentos != null)
+        {
+            OcultarJanela(jinvestimentos);
+            Ativarjanela(jinvestimentos);
+        }
+        else if (jcompra != null)
+        {
+            OcultarJanela(jcompra);
+            GameObject jloja = janelasAbertas.Find(j => j.name == "MenuLoja");
+            if (jloja != null)
+            {
+                OcultarJanela(jloja);
+                Ativarjanela(jloja);
+            }
         }
 
     }
@@ -201,6 +256,8 @@ public class ModuloInterface : MonoBehaviour
                 return Color.white;
         }
     }
+
+
 
 
 

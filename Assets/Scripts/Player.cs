@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
     [Header("Modulos")]
     public ModuloTempo moduloTempo;
     public ModuloRendimentos moduloRendimentos;
+    public ModuloEventosAleatorios moduloEventosA;
 
     [Header("Interfaces")]
     public TextMeshProUGUI saldocontav;
@@ -86,8 +87,12 @@ public class Player : MonoBehaviour
 
     void AtualizarPatrimonio()
     {
-            patrimonio += moduloRendimentos.salario;
-            GanhoMensal += moduloRendimentos.salario;
+        float salario = moduloRendimentos.salario;
+        if (ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Salario)) {
+            salario = moduloEventosA.ExecutarEventos(TipoAfetado.Salario, salario, moduloEventosA.eventosAtivos);
+        }
+            patrimonio += salario;
+            GanhoMensal += salario;
             AlterarSaldoConta();
         
     }
@@ -99,6 +104,14 @@ public class Player : MonoBehaviour
         AtbFinanceiros[despesa.categoria] += despesa.valor;
 
         BensAtualizados.Invoke();
+    }
+
+    public void PatrimonioEventos(Eventos evento)
+    {
+        
+            patrimonio = moduloEventosA.ExecutarEventos(TipoAfetado.Patrimonio, patrimonio, new[] {evento});
+            AlterarSaldoConta();
+     
     }
 
     //deletar dps
