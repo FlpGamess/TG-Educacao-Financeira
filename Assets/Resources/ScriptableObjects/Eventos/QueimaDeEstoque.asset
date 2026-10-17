@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44e5e0635baba342943abcf3f3f69cd, type: 3}
+  m_Name: QueimaDeEstoque
+  m_EditorClassIdentifier: Assembly-CSharp::Eventos
+  id: 6
+  nome: Queima de Estoque
+  descricao: "Promo\xE7\xE3o relampago "
+  gatilho: 0100000003000000
+  tipo: 1
+  decisao: 0
+  opcao1: Fechar
+  opcao2: 
+  ativacao: 0
+  afetados:
+  - tipo: 0
+    nome: CestaBasica
+    tipobonus: 3
+    bonus: -0.2
+  - tipo: 0
+    nome: YSquare
+    tipobonus: 3
+    bonus: -0.3
+  - tipo: 0
+    nome: Curso Profissionalizante
+    tipobonus: 3
+    bonus: -0.2
+  - tipo: 0
+    nome: LivroStarsRPG
+    tipobonus: 3
+    bonus: -0.4
+  duracao: 1

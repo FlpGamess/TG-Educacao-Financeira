@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44e5e0635baba342943abcf3f3f69cd, type: 3}
+  m_Name: UrubuDoPix
+  m_EditorClassIdentifier: Assembly-CSharp::Eventos
+  id: 3
+  nome: Post Misterioso
+  descricao: "Voc\xEA encontra um post misterioso chamado \"Urubu do Pix\", ele promete
+    que se voc\xEA enviar 100 reais para ele, ao fim do m\xEAs ganhara 200 reais"
+  gatilho: 0300000002000000
+  tipo: 0
+  decisao: 1
+  opcao1: Enviar 100 reais
+  opcao2: Ignorar
+  ativacao: 0
+  afetados:
+  - tipo: 5
+    nome: patrimonio
+    tipobonus: 0
+    bonus: -100
+  duracao: 1

@@ -14,11 +14,14 @@ public class ModuloDisposicao : MonoBehaviour
     //evento se o personagem ta esgotado(basicamente uma fila de funções que vao ser executadas)
     public static event Action isEsgotado;
 
+    public ModuloEventosAleatorios moduloEventosA;
+
     //quando o evento for ativado
     private void OnEnable()
     {
         //adiciona RecuperarDisposição a isSemanaAvancada
         ModuloTempo.isSemanaAvancada += RecuperarDisposicao;
+        ModuloTempo.isSemanaAvancada += DescontarDisposicao;
     }
 
     //quando o evento acaba vulgo desativado
@@ -27,6 +30,7 @@ public class ModuloDisposicao : MonoBehaviour
         //remove RecuperarDisposicao da fila is isSemanaAvancada
 
         ModuloTempo.isSemanaAvancada -= RecuperarDisposicao;
+        ModuloTempo.isSemanaAvancada -= DescontarDisposicao;
 
     }
 
@@ -34,7 +38,7 @@ public class ModuloDisposicao : MonoBehaviour
     {
         //disposição começa em 100
         disposicao = 100;
-        CalcularDisposicao(-130);
+       // DescontarDisposicao();
     }
 
     // Update is called once per frame
@@ -45,10 +49,25 @@ public class ModuloDisposicao : MonoBehaviour
 
     //função que calcula a disposição do personagem 
     //para adicionar use numero positivo e para remover negativos
+
+    public void DescontarDisposicao()
+    {   //-40 trabalho
+        Debug.Log($"Descontando disposição | Valor atual: {disposicao}");
+
+        int desconto = -40;
+        if (ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Disposicao))
+        {
+            desconto = ((int)moduloEventosA.ExecutarEventos(TipoAfetado.Disposicao, desconto,moduloEventosA.eventosAtivos ));
+        }
+
+        CalcularDisposicao(desconto);
+    }
     public void CalcularDisposicao(int newD)
     {
+
         //calcula a disposição
         disposicao = disposicao + newD;
+       
         //caso a disposição seja menor ou igual que -30 chama o evento isEsgotado
         if (disposicao <= -30)
         {

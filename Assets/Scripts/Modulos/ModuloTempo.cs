@@ -13,6 +13,7 @@ public class ModuloTempo : MonoBehaviour
     public TextMeshProUGUI semanav;
     public static event Action isSemanaAvancada;
     public static event Action isMesAvancado;
+    public ModuloEventosAleatorios moduloEventos;
 
 
     //caso o evento seja ativado
@@ -30,6 +31,7 @@ public class ModuloTempo : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        AtualizarSemana();
 
     }
 
@@ -56,10 +58,12 @@ public class ModuloTempo : MonoBehaviour
     //atualiza a semana, resumidamente semana+=1
     public void AtualizarSemana()
     {
+        Debug.Log($"AtualizarSemana chamada | Semana atual: {semana}");
         semana++;
         ModuloInterface.AtualizarTxt(semanav, "Semana", semana.ToString());
         isSemanaAvancada?.Invoke();
         AtualizarMes();
+        moduloEventos.VerificarGatilho(GatilhoEvento.AvancarSemana);
     }
 
     public void AtualizarMes()
