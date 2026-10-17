@@ -42,13 +42,16 @@ public class ModuloEventosAleatorios : MonoBehaviour
 
     public  void VerificarGatilho(GatilhoEvento gatilho)
     {
-        List<Eventos> elegiveis = listaEventos.Where(e=> e != null && !eventosAtivos.Any(a=> a.id ==e.id) && e.gatilho.Contains(gatilho)).ToList();
-        if(elegiveis.Count == 0 )
-            return;
-        if(Random.value > chance)
-            return;
+        if (eventosAtivos.Count < 5)
+        {
+            List<Eventos> elegiveis = listaEventos.Where(e => e != null && !eventosAtivos.Any(a => a.id == e.id) && e.gatilho.Contains(gatilho)).ToList();
+            if (elegiveis.Count == 0)
+                return;
+            if (Random.value > chance)
+                return;
 
-        CarregarEvento(elegiveis[Random.Range(0, elegiveis.Count)]);
+            CarregarEvento(elegiveis[Random.Range(0, elegiveis.Count)]);
+        }
     }
 
     private void CarregarEvento(Eventos evento)
