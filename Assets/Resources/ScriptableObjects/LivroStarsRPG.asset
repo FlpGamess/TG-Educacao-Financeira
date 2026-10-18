@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 555dcbc89a929cc4ab7d2fa35ba94a9a, type: 3}
   m_Name: LivroStarsRPG
   m_EditorClassIdentifier: Assembly-CSharp::Itens
+  Id: LivroStarsRPG1
   Nome: LivroStarsRPG
   Descricao: "Um livro de regras RPG de mesa mais aclamado da atualidade, \xE9 Capa
     Dura"

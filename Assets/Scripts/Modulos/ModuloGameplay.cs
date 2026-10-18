@@ -89,7 +89,7 @@ public class ModuloGameplay : MonoBehaviour
         bens = new List<ItensComprados>();
         dividas = new List<Despesas>();
         var itensPorId = new Dictionary<string, Itens>();
-        foreach (var item in Resources.LoadAll<Itens>("ScriptaableObjects"))
+        foreach (var item in Resources.LoadAll<Itens>("ScriptableObjects"))
         {
             if (string.IsNullOrWhiteSpace(item.Id))
             {
