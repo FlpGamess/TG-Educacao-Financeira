@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Itens", menuName = "Scriptable Objects/Itens")]
 public class Itens : ScriptableObject
 {
+    public string Id;
     //Nome do Item
     public string Nome;
     //Descricao do Item
@@ -11,7 +12,7 @@ public class Itens : ScriptableObject
     public float Preco;
     //Categoria financeira
     public AtributosFinanceiros Categoria;
-    //O que o item é: movel,serviço,comida,etc
+    //O que o item ï¿½: movel,serviï¿½o,comida,etc
     public string Tipo;
     //caso o item aumente algo
     public int efeito;

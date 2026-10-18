@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 555dcbc89a929cc4ab7d2fa35ba94a9a, type: 3}
   m_Name: CursoProfissionalizante
   m_EditorClassIdentifier: Assembly-CSharp::Itens
+  Id: Curso Profissionalizante1
   Nome: Curso Profissionalizante
   Descricao: curso para aprimorar se salario
   Preco: 1600
@@ -20,3 +21,4 @@ MonoBehaviour:
   efeito: 400
   Duracao: 12
   QuantidadeMax: 1
+  TipoDespesa: 0

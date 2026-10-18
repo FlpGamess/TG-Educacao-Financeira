@@ -9,9 +9,9 @@ public class ModuloDisposicao : MonoBehaviour
     //lazer 10%
     //estudos de 10% a 30%
     public int disposicao = 100;
-    //text que recebe a disposição
+    //text que recebe a disposiï¿½ï¿½o
     public TextMeshProUGUI disposicaov;
-    //evento se o personagem ta esgotado(basicamente uma fila de funções que vao ser executadas)
+    //evento se o personagem ta esgotado(basicamente uma fila de funï¿½ï¿½es que vao ser executadas)
     public static event Action isEsgotado;
 
     public ModuloEventosAleatorios moduloEventosA;
@@ -19,7 +19,7 @@ public class ModuloDisposicao : MonoBehaviour
     //quando o evento for ativado
     private void OnEnable()
     {
-        //adiciona RecuperarDisposição a isSemanaAvancada
+        //adiciona RecuperarDisposiï¿½ï¿½o a isSemanaAvancada
         ModuloTempo.isSemanaAvancada += RecuperarDisposicao;
         ModuloTempo.isSemanaAvancada += DescontarDisposicao;
     }
@@ -36,8 +36,16 @@ public class ModuloDisposicao : MonoBehaviour
 
     void Start()
     {
-        //disposição começa em 100
+        //disposiï¿½ï¿½o comeï¿½a em 100
+        // disposicao = 100;
+        // CalcularDisposicao(-130);
+        AlterarDisposicao();
+    }
+
+    public void IniciarPartidaNova()
+    {
         disposicao = 100;
+        AlterarDisposicao();
        // DescontarDisposicao();
     }
 
@@ -47,12 +55,12 @@ public class ModuloDisposicao : MonoBehaviour
         AlterarDisposicao();
     }
 
-    //função que calcula a disposição do personagem 
+    //funï¿½ï¿½o que calcula a disposiï¿½ï¿½o do personagem 
     //para adicionar use numero positivo e para remover negativos
 
     public void DescontarDisposicao()
     {   //-40 trabalho
-        Debug.Log($"Descontando disposição | Valor atual: {disposicao}");
+        Debug.Log($"Descontando disposiï¿½ï¿½o | Valor atual: {disposicao}");
 
         int desconto = -40;
         if (ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Disposicao))
@@ -65,10 +73,10 @@ public class ModuloDisposicao : MonoBehaviour
     public void CalcularDisposicao(int newD)
     {
 
-        //calcula a disposição
+        //calcula a disposiï¿½ï¿½o
         disposicao = disposicao + newD;
        
-        //caso a disposição seja menor ou igual que -30 chama o evento isEsgotado
+        //caso a disposiï¿½ï¿½o seja menor ou igual que -30 chama o evento isEsgotado
         if (disposicao <= -30)
         {
             Debug.Log("Bobbie goods");
@@ -76,15 +84,15 @@ public class ModuloDisposicao : MonoBehaviour
         }
     }
 
-    //função de recuperação da disposição
+    //funï¿½ï¿½o de recuperaï¿½ï¿½o da disposiï¿½ï¿½o
     public void RecuperarDisposicao()
     {
-        //se a disposição terminar a semana positiva
+        //se a disposiï¿½ï¿½o terminar a semana positiva
         if (disposicao >= 0)
         {
             disposicao = 100;
         }
-        //se nao se a disposição terminar entre -1 e 29
+        //se nao se a disposiï¿½ï¿½o terminar entre -1 e 29
         else if (disposicao < 0 && disposicao>-30) {
             disposicao = 100 + disposicao;
         }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 555dcbc89a929cc4ab7d2fa35ba94a9a, type: 3}
   m_Name: YSquare
   m_EditorClassIdentifier: Assembly-CSharp::Itens
+  Id: YSquare1
   Nome: YSquare
   Descricao: Console de Videogame
   Preco: 5000
@@ -20,3 +21,4 @@ MonoBehaviour:
   efeito: 0
   Duracao: -1
   QuantidadeMax: 1
+  TipoDespesa: 0

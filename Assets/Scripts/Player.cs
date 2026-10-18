@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        AtualizarPatrimonio();
+        //AtualizarPatrimonio();
         //patrimonio = moduloRendimentos.salario;
         //AlterarSaldoConta();
 
@@ -83,6 +83,25 @@ public class Player : MonoBehaviour
         slot3.sprite = spriteMorad;
         slot4.sprite = spriteSaube;
         slot5.sprite = spriteLaz;
+    }
+
+    public void IniciarPartidaNova()
+    {
+        patrimonio = 0f;
+        GanhoMensal = 0f;
+        GanhoAnterior = 0f;
+        Bens.Clear();
+        Dividas.Clear();
+        HistoricoPagamentos.Clear();
+        HistoricoGanhos.Clear();
+
+        foreach(AtributosFinanceiros categorias in Enum.GetValues(typeof(AtributosFinanceiros)))
+        {
+            AtbFinanceiros[categorias] = 0f;
+            DebitosMensais[categorias] = 0f;
+        }
+
+        AtualizarPatrimonio();
     }
 
     void AtualizarPatrimonio()
