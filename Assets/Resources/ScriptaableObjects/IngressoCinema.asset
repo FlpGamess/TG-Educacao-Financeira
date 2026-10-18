@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 555dcbc89a929cc4ab7d2fa35ba94a9a, type: 3}
   m_Name: IngressoCinema
   m_EditorClassIdentifier: Assembly-CSharp::Itens
+  Id: Cinema1
   Nome: Cinema
   Descricao: Ingresso para ver um filme no cinema
   Preco: 34
@@ -20,3 +21,4 @@ MonoBehaviour:
   efeito: 5
   Duracao: 0
   QuantidadeMax: 5
+  TipoDespesa: 0

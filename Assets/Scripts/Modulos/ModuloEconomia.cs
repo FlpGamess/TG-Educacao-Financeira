@@ -41,6 +41,22 @@ public class ModuloEconomia : MonoBehaviour
 
     private List<(DadosInvestimento banco, GameObject item)> itensInstanciados = new List<(DadosInvestimento, GameObject)>();
 
+    public int ObterSemanaLiberaInvest()
+    {
+        return semanaLiberaInvest;
+    }
+
+    public bool ObterCartaoLib()
+    {
+        return cartaoLib;
+    }
+
+    public void SetSemanaLiberaInvest(int semanaSalva, bool cartaoSalvo)
+    {
+        semanaLiberaInvest = semanaSalva;
+        cartaoLib = cartaoSalvo;
+    }
+    
     public void OnEnable()
     {
         Player.BensAtualizados += DebitarDespesas;
@@ -300,6 +316,20 @@ public class ModuloEconomia : MonoBehaviour
 
         AtualizarUI();
         player.AlterarSaldoConta();
+    }
+
+    public void RestaurarControles(int semanaSalva, bool cartaoSalvo)
+    {
+        semanaLiberaInvest = semanaSalva;
+        cartaoLib = cartaoSalvo;
+    }
+
+    public void AtualizarDepoisDeRestaurar()
+    {
+        valorTot = player.patrimonio >= 100;
+        AtualizarVisibilidadeBotao();
+
+        MontarLista();
     }
 
 }
