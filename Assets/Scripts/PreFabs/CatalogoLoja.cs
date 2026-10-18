@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEditor.Progress;
 
@@ -14,11 +15,13 @@ public class CatalogoLoja : MonoBehaviour
         {AtributosFinanceiros.SaudeBemEstar,new List<Itens>()},
         {AtributosFinanceiros.Educacao,new List<Itens>()}
     };
-
+    public Player player;
+    public ModuloEventosAleatorios moduloEventosA;
+    public event Action PrecosAtualizados;
 
     void Start()
     {
-        CarregarCatalogo();
+        CarregarCatalogo(player.Bens);
     }
 
     // Update is called once per frame
@@ -27,7 +30,7 @@ public class CatalogoLoja : MonoBehaviour
         
     }
 
-    public void CarregarCatalogo()
+    public void CarregarCatalogo(List<ItensComprados> bens)
     {
         LimparListas();
 
@@ -35,12 +38,26 @@ public class CatalogoLoja : MonoBehaviour
         /*foreach(AtributosFinanceiros atbf in Enum.GetValues(typeof(AtributosFinanceiros))){
             catalogo.Add(atbf, new List<Itens>());
         }*/
+        bool hasEventoItem = ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Item);
+        bool hasEventoAtb = ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.AtributoFinanceiro);
+        Itens[] ItensOriginais = Resources.LoadAll<Itens>("ScriptableObjects");
 
-        itens.AddRange(Resources.LoadAll<Itens>("ScriptaableObjects"));
-
-        foreach(Itens it in itens)
+        foreach(Itens it in ItensOriginais)
         {
-            catalogo[it.Categoria].Add(it);
+            if (bens.Count(bens => bens.dados.Nome == it.Nome) == it.QuantidadeMax){
+                continue;
+            }
+
+            Itens item = Instantiate(it);
+            if (hasEventoItem)
+            {
+;                item.Preco = moduloEventosA.ExecutarEventos(TipoAfetado.Item, item.Preco, moduloEventosA.eventosAtivos, item.Nome);
+            }
+             if (hasEventoAtb) {
+                item.Preco = moduloEventosA.ExecutarEventos(TipoAfetado.AtributoFinanceiro, item.Preco, moduloEventosA.eventosAtivos,item.Categoria.ToString());
+            }
+                itens.Add(item);
+            catalogo[item.Categoria].Add(item);
         }
     }
 
@@ -51,5 +68,26 @@ public class CatalogoLoja : MonoBehaviour
         {
             lista.Clear();
         }
+    }
+
+    public void ItensEventos(Eventos evento)
+    {
+        foreach (Itens item in itens)
+        {
+            float precoAnterior = item.Preco;
+
+            item.Preco = moduloEventosA.ExecutarEventos(
+                TipoAfetado.Item,
+                item.Preco,
+                new[] { evento },
+                item.Nome
+            );
+
+            Debug.Log(
+                $"Evento: {evento.nome} | Item: {item.Nome} | " +
+                $"Antes: {precoAnterior} | Depois: {item.Preco}"
+            );
+        }
+        PrecosAtualizados?.Invoke();
     }
 }

@@ -54,6 +54,7 @@ public class ModuloLoja : MonoBehaviour
     public ModuloTempo tempo;
     public ModuloRendimentos modulorendimentos;
     public ModuloEconomia moduloEconomia;
+    public ModuloEventosAleatorios moduloEventosA;
 
     public InfosPagamento InfoPag;
     public DropdownContainer InfoParcel;
@@ -61,18 +62,14 @@ public class ModuloLoja : MonoBehaviour
 
     private UnityAction[] FuncoesCompraItem; //= {() => Comprar(itemSelecionado), ()=> SimularCompra(itemSelecionado) };
 
-
-
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-    }
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
         
+        catalogo.PrecosAtualizados += AtualizarPrecos;
+    }
+    private void OnDisable()
+    {
+        catalogo.PrecosAtualizados -= AtualizarPrecos;
     }
 
     public void CarregarLoja()
@@ -96,19 +93,34 @@ public class ModuloLoja : MonoBehaviour
                 botoes.Add(botao);
             }
         }
-        catalogo.CarregarCatalogo();
+        catalogo.CarregarCatalogo(player.Bens);
+       
         foreach (Itens item in catalogo.catalogo[categoriaAtual])
         {
             // Debug.Log(item);
             //cria a celula do item a venda na loja, futuramente com os itens sera mudado pra um for each
             CelulaItemLoja cedulaItem = Instantiate(prefabCelulaItemLoja, containerItens);
             cedulaItem = HelperConfig.ConfigurarCedulaItem(cedulaItem, item,  /*UnityAction*/() =>ConfigItemCompra(item));
+         
             //adiciona a celula a lista de celulas
             itens.Add(cedulaItem);
         }
 
 
     }
+
+    public void AtualizarPrecos()
+    {
+        LimparCedulas();
+        foreach (Itens item in catalogo.catalogo[categoriaAtual])
+        {
+            CelulaItemLoja celula = Instantiate(prefabCelulaItemLoja, containerItens);
+
+            celula = HelperConfig.ConfigurarCedulaItem(celula, item, () => ConfigItemCompra(item));
+            itens.Add(celula);
+        }
+        
+}
 
     public void ConfigItemCompra(Itens item)
     {
@@ -252,6 +264,8 @@ public class ModuloLoja : MonoBehaviour
         //player.DebitarPagamento(compra.Preco);
         container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
         container.saldoDisposicao = AtualizarPlayerInfos(container.saldoDisposicao, 1);
+        moduloEventosA.VerificarGatilho(GatilhoEvento.Comprar);
+        
 
     }
 
@@ -307,7 +321,7 @@ public class ModuloLoja : MonoBehaviour
 
                 for (int s = 0; s < semanasfaltantes; s++)
                 {
-                    float valorAtual = moduloEconomia.CalcularInvestimento(banco.percentualCDI, valorAnterior, banco.mudanca, banco.taxaAd);
+                    float valorAtual = moduloEconomia.CalcularInvestimento(banco.tipo.ToString(),banco.percentualCDI, valorAnterior, banco.mudanca, banco.taxaAd);
 
                     valorAnterior = valorAtual;
 

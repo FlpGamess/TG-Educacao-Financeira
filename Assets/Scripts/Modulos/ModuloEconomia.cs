@@ -35,6 +35,8 @@ public class ModuloEconomia : MonoBehaviour
     public Button btnInvestimentos;
     private bool valorTot = false;
 
+    public ModuloEventosAleatorios moduloEventosA; 
+
     private int semanaLiberaInvest = -1;
 
     private bool cartaoLib = false;
@@ -145,8 +147,12 @@ public class ModuloEconomia : MonoBehaviour
         {
             GameObject item = Instantiate(prefabItemInvestimento, content);
             itensInstanciados.Add((banco, item));
-
-            ModuloInterface.AtualizarTxt(item.transform.Find("PainelTexto/TextoNome").GetComponent<TextMeshProUGUI>(), "", $"{banco.tipo}: {banco.percentualCDI}%");
+            float cdi = banco.percentualCDI;
+            if (ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Investimentos))
+            {
+                cdi = moduloEventosA.ExecutarEventos(TipoAfetado.Investimentos, cdi, moduloEventosA.eventosAtivos, banco.tipo.ToString());
+            }
+            ModuloInterface.AtualizarTxt(item.transform.Find("PainelTexto/TextoNome").GetComponent<TextMeshProUGUI>(), "", $"{banco.tipo}: {cdi}%");
             ModuloInterface.AtualizarTxt(item.transform.Find("PainelTexto/TextoDescricao").GetComponent<TextMeshProUGUI>(), "", banco.descricao);
 
             TMP_InputField inputInvestir = item.transform.Find("PainelValor/LinhaInvestir/inputInvestir").GetComponent<TMP_InputField>();
@@ -180,6 +186,7 @@ public class ModuloEconomia : MonoBehaviour
         banco.semanaInvestimento = ModuloTempo.semana;
 
         player.AlterarSaldoConta();
+        moduloEventosA.VerificarGatilho(GatilhoEvento.Investir);
         AtualizarUI();
 
         input.text = "";
@@ -251,7 +258,8 @@ public class ModuloEconomia : MonoBehaviour
         {
             if (banco.valorInvestido <= 0) continue;
             valorini = banco.valorInvestido;
-            banco.valorInvestido = CalcularInvestimento(banco.percentualCDI,banco.valorInvestido,banco.mudanca, banco.taxaAd);
+            Debug.Log("Percentual cdi "+banco.percentualCDI+ "valorInvestido " + banco.valorInvestido+ " mudanca" + banco.mudanca+ "taxaAd " + banco.taxaAd);
+            banco.valorInvestido = CalcularInvestimento(banco.tipo.ToString(), banco.percentualCDI,banco.valorInvestido,banco.mudanca, banco.taxaAd);
             float valorf = banco.valorInvestido;
             Debug.Log(valorini + " - " + valorf);
             player.GanhoMensal += valorf -valorini;
@@ -260,8 +268,14 @@ public class ModuloEconomia : MonoBehaviour
         AtualizarUI();
     }
     
-    public float CalcularInvestimento(float percentualCDI, float valorInvestido, float mudanca, float taxaAd)
+    public float CalcularInvestimento(string nomeinvestimento, float percentualCDI, float valorInvestido, float mudanca, float taxaAd)
     {
+        if (ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Investimentos)) {
+            percentualCDI = moduloEventosA.ExecutarEventos(TipoAfetado.Investimentos, percentualCDI,moduloEventosA.eventosAtivos,nomeinvestimento);
+            mudanca = moduloEventosA.ExecutarEventos(TipoAfetado.Investimentos, mudanca, moduloEventosA.eventosAtivos, nomeinvestimento);
+            taxaAd = moduloEventosA.ExecutarEventos(TipoAfetado.Investimentos, taxaAd, moduloEventosA.eventosAtivos, nomeinvestimento);
+
+        }
         //cdi normal
         float taxaBase = (percentualCDI / 100f) * moduloRendimento.cdiSemanal;
         //vaiação pro cdb
