@@ -4,25 +4,25 @@ using TMPro;
 using System.Collections.Generic;
 using System.Linq;
 
-public enum TipoInvestimento
+public enum TipoInvestimento // criação dos tipos de investimentos que serão usados
 {
-    Poupanca,
-    CDB,
-    Fundos,
+    Poupanca, //Rendimento de acordo com o CDI, tem uma espera de 4 semanas para não perder o rendimento
+    CDB, // Rendimento com uma certa aleatoriedade em relação ao mercado e retem imposto de renda regressiva sobre os lucros
+    Fundos, // Rendimento variavel com dedução de taxa de administração mensal
 }
 
 [System.Serializable]
-public class DadosInvestimento
+public class DadosInvestimento //Variaveis para a criação do banco
 {
-    public TipoInvestimento tipo;
+    public TipoInvestimento tipo; // qual tipo de investimento
     [TextArea]
     public string descricao;
-    public float percentualCDI;
-    public float valorInvestido;
-    public float valorOriginal;  //Só para poupança
-    public int semanaInvestimento = -1;
-    public float mudanca = 0f;
-    public float taxaAd = 0f;
+    public float percentualCDI; //Quantos % do CDI vão ser 
+    public float valorInvestido; // valor total
+    public float valorOriginal;  //Usado para poupança e no calculo de ir do CDB
+    public int semanaInvestimento = -1; // quando foi colocado o valor
+    public float mudanca = 0f; //usado para verificar a variação aleatoria
+    public float taxaAd = 0f; // Taxa de administração cobrada no rendiemento usado pelos fundos
 }
 
 public class ModuloEconomia : MonoBehaviour
@@ -103,7 +103,7 @@ public class ModuloEconomia : MonoBehaviour
     }
 
 
-    void TempoGravado()
+    void TempoGravado() //verificação realizada para a liberação da aba de investimentos, onde se o valor do patrimonio no final do mês for maior ou igual a 100 ele pode investir se não só no proximo mês.
 {
     if (semanaLiberaInvest == -1 && ModuloTempo.fimMes && player.patrimonio > 100){
         semanaLiberaInvest = ModuloTempo.semana;
@@ -114,7 +114,7 @@ public class ModuloEconomia : MonoBehaviour
     else
         valorTot = false;
 
-    if ( semanaLiberaInvest != -1 && !cartaoLib){
+    if ( semanaLiberaInvest != -1 && !cartaoLib){ //lógica para liberar o cartão de crédito, onde se a partir da semana que o investimento for liberado se passarem 4 semanas e ele investiu no total mais que 100 reais o cartão é liberado.
         int semanaCheck = semanaLiberaInvest +4;
         if (ModuloTempo.semana >= semanaCheck && ModuloTempo.fimMes)
         {
@@ -250,7 +250,7 @@ public class ModuloEconomia : MonoBehaviour
             //cg.alpha = podeResgatar ? 1f : 0.5f;
         }
     }
-
+    //Executado quando se avança a semana, calcula o rendimento de cada banco ativo e adiciona o lucro ao GanhoMensal do Player
     void RenderInvestimentos()
     {
         float valorini = 0f;
@@ -267,7 +267,7 @@ public class ModuloEconomia : MonoBehaviour
 
         AtualizarUI();
     }
-    
+    // Aplica os eventos Aleatorios que irão mexer com os investimentos, e calcula também a taxa mensal(CDI base+ oscilação do mercado) e desconta a taxa de administração.
     public float CalcularInvestimento(string nomeinvestimento, float percentualCDI, float valorInvestido, float mudanca, float taxaAd)
     {
         if (ModuloEventosAleatorios.tiposAfetados.Contains(TipoAfetado.Investimentos)) {
@@ -292,27 +292,27 @@ public class ModuloEconomia : MonoBehaviour
 
     public void Resgatar(DadosInvestimento banco, TMP_InputField inputResgate)
     {
-        if(!float.TryParse(inputResgate.text, out float valorResgatar) || valorResgatar <= 0)
+        if(!float.TryParse(inputResgate.text, out float valorResgatar) || valorResgatar <= 0)//impede resgate de valores menores ou iguais a zero
         {
             Debug.Log("Digite um valor válido para resgatar.");
             return;
         }
-        if(valorResgatar > banco.valorInvestido)
+        if(valorResgatar > banco.valorInvestido) //impede resgate de valores maiores
         {
             Debug.Log("Valor de resgate maior que o investido.");
             return;
         }
 
-        float proporcao = valorResgatar / banco.valorInvestido;
+        float proporcao = valorResgatar / banco.valorInvestido; //calculo do valor resgatado em relação ao total
         float principalRetirado = banco.valorOriginal * proporcao;
         float valorLiquido = valorResgatar;
 
 
-        if (banco.tipo == TipoInvestimento.Poupanca && !PodeResgatar(banco))
+        if (banco.tipo == TipoInvestimento.Poupanca && !PodeResgatar(banco))//Verifica a caracteristica do tipo se for resgatado antes de 4 semanas ele pega só o valor original investido
         {
             valorLiquido = principalRetirado; // Retira apenas o valor original, sem rendimento
         }
-        else if (banco.tipo == TipoInvestimento.CDB)
+        else if (banco.tipo == TipoInvestimento.CDB)// calcula o lucro correspondete e aplica uma tabela regressiva de imposto sobre o lucro; -- até 4 semanas é 22.5%, de 5 a 8 é 20.0%, de 9 a 16 semanas é de 17.5% e acima de 16 semanas eé de 15%
         {
             float lucro = valorResgatar - principalRetirado;
             if (lucro > 0)

@@ -13,9 +13,12 @@ public class Despesas
     public bool isPaga;
     public float valor;
 
+    public string itemId;
+
     public Despesas(Itens item, TipoPagamento tipoCompra, float valor)
     {
         this.item = item;
+        this.itemId = item != null ? item.Id: "";
         this.categoria = item.Categoria;
         this.tipocompra = tipoCompra;
         this.valor = valor;

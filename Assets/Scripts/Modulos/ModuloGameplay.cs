@@ -4,45 +4,20 @@ using System.Collections.Generic;
 
 [System.Serializable]
 
-public class GanhoSalvo
+public class GanhoSalvo //variaveis usadas para destrinchar os dicionarios vindo de player.HistoricoGanhos em uma lista serializavel
 {
     public int mes;
 
     public float valor;
 }
 [System.Serializable]
-public class AtributoFinanceiroSalvo
+public class AtributoFinanceiroSalvo //atribuição de variaveis que convertem os dicionarios de categoria financeiras(Player.AtbFinanceiras e Player.DebitosMensais) em lista
 {
     public AtributosFinanceiros categoria;
     public float valor;
 }
 [System.Serializable]
-public class BemSalvo
-{
-    public string itemId;
-    public int duracaoAtual;
-}
-[System.Serializable]
-public class ParcelaSalva
-{
-    public float valor;
-    public int semana;
-    public int numero;
-}
-
-[System.Serializable]
-public class DividaSalva
-{
-    public string itemId;
-    public AtributosFinanceiros categoria;
-    public TipoPagamento tipocompra;
-    public float juros;
-    public bool isPaga;
-    public float valor;
-    public List<ParcelaSalva> parcelas = new List<ParcelaSalva>();
-}
-[System.Serializable]
-public class Salvamento
+public class Salvamento // Classe onde é agrupados as variaveis que serão salvas depois, sendo elas as de Tempo, valores, historico de pagamentos, investimentos e as listas de bens e dividas
 {
     public float patrimonio;
     public float GanhoMensal;
@@ -51,9 +26,9 @@ public class Salvamento
     public int mes;
     public int disposicao;
 
-    public List<BemSalvo> Bens = new List<BemSalvo>();
+    public List<ItensComprados> Bens = new List<ItensComprados>();
 
-    public List<DividaSalva> Dividas = new List<DividaSalva>();
+    public List<Despesas> Dividas = new List<Despesas>();
 
     public List<PagamentoRealizado> HistoricoPagamentos = new List<PagamentoRealizado>();
 
@@ -72,8 +47,6 @@ public class Salvamento
 
     public bool cartaoLib;
 
-
-
 }
 public class ModuloGameplay : MonoBehaviour
 {
@@ -88,8 +61,8 @@ public class ModuloGameplay : MonoBehaviour
     {
         bens = new List<ItensComprados>();
         dividas = new List<Despesas>();
-        var itensPorId = new Dictionary<string, Itens>();
-        foreach (var item in Resources.LoadAll<Itens>("ScriptableObjects"))
+        var itensPorId = new Dictionary<string, Itens>();//JsonUtility não serializa instancias vindas de scriptableObjects, por isso bem e despesas tem que carregar a string do ID
+        foreach (var item in Resources.LoadAll<Itens>("ScriptableObjects")) // carrega todos os scriptableObjects disponiveis e os indexa em um dicionario itensPorId.
         {
             if (string.IsNullOrWhiteSpace(item.Id))
             {
@@ -104,9 +77,9 @@ public class ModuloGameplay : MonoBehaviour
             }
             itensPorId.Add(item.Id, item);
         }        
-        if (save.Bens != null)
+        if (save.Bens != null) 
         {
-            foreach (var registro in save.Bens)
+            foreach (var registro in save.Bens)// para cada item em Bens o item é buscado pelo itemId e recria a instância de ItemComprados mantendo assim a DuracaoAtual
             {
                 if(registro == null || string.IsNullOrWhiteSpace(registro.itemId) || !itensPorId.TryGetValue(registro.itemId,out Itens item))
                 {
@@ -116,14 +89,14 @@ public class ModuloGameplay : MonoBehaviour
 
                 bens.Add(new ItensComprados(item)
                 {
-                    DuracaoAtual = registro.duracaoAtual
+                    DuracaoAtual = registro.DuracaoAtual
                 });
             }
         }
 
         if(save.Dividas != null)
         {
-            foreach (var registro in save.Dividas)
+            foreach (var registro in save.Dividas) // para cada despesa em Dividas o item é associado com o seu correspondente e restaura as parcelas do mesmo.
             {
                 if(registro == null || string.IsNullOrWhiteSpace(registro.itemId) || !itensPorId.TryGetValue(registro.itemId,out Itens item) || registro.parcelas == null)
                 {
@@ -138,15 +111,7 @@ public class ModuloGameplay : MonoBehaviour
                     isPaga = registro.isPaga,
                 };
 
-                foreach (var parcela in registro.parcelas)
-                {
-                    if(parcela == null)
-                    {
-                        Debug.LogError("Parcela inválida no salvamento");
-                        return false;
-                    }
-                    despesa.parcelas.Add(new Parcela(parcela.valor, parcela.semana, parcela.numero));
-                }
+                despesa.parcelas = new List<Parcela>(registro.parcelas);
 
                 dividas.Add(despesa);
             }
@@ -157,7 +122,7 @@ public class ModuloGameplay : MonoBehaviour
         
     
    public void SalvarJogo(Player player, ModuloDisposicao moduloDisposicao, ModuloEconomia moduloEconomia)
-{
+{ //copia os valores vindos direto de PLayer, ModuloTempo, ModuloDisposicao e ModuloEconomia e atribiu esses valores em bens, dividas, historicoPagamentos e bancos.
     Salvamento save = new Salvamento
     {
         patrimonio = player.patrimonio,
@@ -172,6 +137,8 @@ public class ModuloGameplay : MonoBehaviour
         bancos = moduloEconomia.bancos,
         semanaLiberaInvest = moduloEconomia.ObterSemanaLiberaInvest(),
         cartaoLib = moduloEconomia.ObterCartaoLib(),
+        Bens = player.Bens,
+        Dividas = player.Dividas,
     };
     foreach (var ganho in player.HistoricoGanhos) 
     {
@@ -198,60 +165,8 @@ public class ModuloGameplay : MonoBehaviour
         });
     }
 
-    foreach (var bem in player.Bens)
-        {
-            if (bem == null || bem.dados == null || string.IsNullOrWhiteSpace(bem.dados.Id))
-            {
-                Debug.LogError("Não foi possivel salvar: bem sem item ou ID.");
-                return;
-            }
-
-            save.Bens.Add(new BemSalvo
-            {
-                itemId = bem.dados.Id,
-                duracaoAtual = bem.DuracaoAtual
-            });
-        }
-    
-    foreach (var despesa in player.Dividas)
-        {
-            if (despesa == null || despesa.item == null || string.IsNullOrWhiteSpace(despesa.item.Id) || despesa.parcelas == null)
-            {
-                Debug.LogError("Não foi possivel salvar: bem sem item ou ID ou parcelas.");
-                return;
-            }
-
-            DividaSalva divida = new DividaSalva
-            {
-                itemId = despesa.item.Id,
-                categoria = despesa.categoria,
-                tipocompra = despesa.tipocompra,
-                juros = despesa.juros,
-                isPaga = despesa.isPaga,
-                valor = despesa.valor
-            };
-
-            foreach (var parcela in despesa.parcelas)
-            {
-                if (parcela == null)
-                {
-                    Debug.LogError("Não foi possível salvar: parcela inválida.");
-                    return;
-
-                }
-                divida.parcelas.Add(new ParcelaSalva
-                {
-                    valor = parcela.valor,
-                    semana = parcela.semana,
-                    numero = parcela.numero
-                });
-            }      
-
-            save.Dividas.Add(divida);
-        }
-
-    string json = JsonUtility.ToJson(save);
-    PlayerPrefs.SetString("salvamento", json);
+    string json = JsonUtility.ToJson(save);// feita a conversão em Json
+    PlayerPrefs.SetString("salvamento", json);// armazena o JSON criado
     PlayerPrefs.Save();
 
     Debug.Log("Jogo salvo! JSON: " + json);
@@ -259,12 +174,12 @@ public class ModuloGameplay : MonoBehaviour
 
 public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, ModuloEconomia moduloEconomia)
     {
-        if(!PlayerPrefs.HasKey("salvamento"))
+        if(!PlayerPrefs.HasKey("salvamento"))// verifica se o json existe
         {
             Debug.LogWarning("Nenhum salvamento encontrado.");
             return false;
         }
-        string json = PlayerPrefs.GetString("salvamento");
+        string json = PlayerPrefs.GetString("salvamento"); 
         if(string.IsNullOrEmpty(json))
         {
             Debug.LogWarning("O salvamento está vazio.");
@@ -274,7 +189,7 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
         Salvamento save;
         try
         {
-            save = JsonUtility.FromJson<Salvamento>(json);
+            save = JsonUtility.FromJson<Salvamento>(json); 
         }
         catch(ArgumentException e)
         {
@@ -290,7 +205,7 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
 
         if(!ReconstruirBensDividas(save, out var bens, out var dividas))
         return false;
-        
+        // atribuição de variveis aos modulos correspondentes, fazendo recalculos, no caso de investimentos os bancos são restaurados no ModuloEconomia e aplicado o RestaurarControles.
         player.Bens = bens;
         player.Dividas = dividas;
 
@@ -305,7 +220,7 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
         moduloDisposicao.disposicao = save.disposicao;
         player.HistoricoPagamentos = save.HistoricoPagamentos ?? new List<PagamentoRealizado>();
         moduloEconomia.RestaurarControles(save.semanaLiberaInvest, save.cartaoLib);
-
+        //Reconstrução dos dicionarios
         player.HistoricoGanhos.Clear();
         if(save.Ganhos != null)
         {
@@ -330,7 +245,7 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
             foreach (var debito in save.debitosMensais)
                 Player.DebitosMensais[debito.categoria] = debito.valor;
         }
-
+        //Renotificação da UI
         player.AlterarSaldoConta();
         moduloDisposicao.AlterarDisposicao();
         ModuloInterface.AtualizarTxt(player.moduloTempo.semanav, "Semana", save.semana.ToString());
