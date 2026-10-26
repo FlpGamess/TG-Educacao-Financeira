@@ -3,7 +3,12 @@ using System;
 using System.Collections.Generic;
 
 [System.Serializable]
-
+public class EventoSalvo
+{
+    public int id;
+    public int duracaoRestante;
+}
+[System.Serializable]
 public class GanhoSalvo //variaveis usadas para destrinchar os dicionarios vindo de player.HistoricoGanhos em uma lista serializavel
 {
     public int mes;
@@ -47,12 +52,15 @@ public class Salvamento // Classe onde é agrupados as variaveis que serão salv
 
     public bool cartaoLib;
 
+    public List<EventoSalvo> eventosAtivos = new List<EventoSalvo>();
+
 }
 public class ModuloGameplay : MonoBehaviour
 {
     public ModuloHistorico historicoBens;
     public MHistorico historicoFinanceiro;
     public MCalendario calendario;
+    public ModuloEventosAleatorios moduloEventos;
     private bool ReconstruirBensDividas(
 
         Salvamento save,
@@ -165,6 +173,21 @@ public class ModuloGameplay : MonoBehaviour
         });
     }
 
+    foreach (var evento in moduloEventos.eventosAtivos)
+        {
+            save.eventosAtivos.Add(new EventoSalvo
+            {
+                id = evento.id,
+                duracaoRestante=EventoSalvo.duracao
+            });
+        }
+    
+    if (moduloEventos.TemDecisaoPendente)
+        {
+            Debug.LogWarning("Responda ao evento antes de salvar");
+            return;
+        }
+
     string json = JsonUtility.ToJson(save);// feita a conversão em Json
     PlayerPrefs.SetString("salvamento", json);// armazena o JSON criado
     PlayerPrefs.Save();
@@ -177,6 +200,11 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
         if(!PlayerPrefs.HasKey("salvamento"))// verifica se o json existe
         {
             Debug.LogWarning("Nenhum salvamento encontrado.");
+            return false;
+        }
+        if (moduloEventos.TemDecisaoPendente)
+        {
+            Debug.LogWarning("Responda ao evento antes de carregar");
             return false;
         }
         string json = PlayerPrefs.GetString("salvamento"); 

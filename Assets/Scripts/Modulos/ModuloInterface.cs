@@ -117,7 +117,7 @@ public class ModuloInterface : MonoBehaviour
         PopUp popup = Instantiate(prefabPopUp, painelprincipal).GetComponent<PopUp>();
         AtualizarTxt(popup.nome, evento.nome,"");
         AtualizarTxt(popup.descricao, "descrição: ", evento.descricao);
-
+        bool escolhido =false;
         for (int i = 0; i < funcoes.Length; i++)
         {
             GameObject botao = Instantiate(prefabBotao, popup.btncontainer);
@@ -127,14 +127,18 @@ public class ModuloInterface : MonoBehaviour
 
             componenteBotao.onClick.AddListener(() =>
             {
+                if(escolhido) return;
+                escolhido = true;
+                foreach(var b in popup.btns) b.interactable = false;
                 funcao?.Invoke();
                 ReiniciarJanelas();
+                popup.gameObject.SetActive(false);
                 Destroy(popup.gameObject);
             });
             AtualizarTxt(botao.GetComponentInChildren<TextMeshProUGUI>(), "", opcoes[i]);
             popup.btns.Add(componenteBotao);
         }
-
+        return popup;
     }
 
     public void ReiniciarJanelas()
