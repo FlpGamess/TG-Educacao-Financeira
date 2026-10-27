@@ -178,7 +178,7 @@ public class ModuloGameplay : MonoBehaviour
             save.eventosAtivos.Add(new EventoSalvo
             {
                 id = evento.id,
-                duracaoRestante=EventoSalvo.duracao
+                duracaoRestante=evento.duracao
             });
         }
     
@@ -232,6 +232,9 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
         }
 
         if(!ReconstruirBensDividas(save, out var bens, out var dividas))
+        return false;
+
+        if(!moduloEventos.RestaurarEventos(save.eventosAtivos))
         return false;
         // atribuição de variveis aos modulos correspondentes, fazendo recalculos, no caso de investimentos os bancos são restaurados no ModuloEconomia e aplicado o RestaurarControles.
         player.Bens = bens;

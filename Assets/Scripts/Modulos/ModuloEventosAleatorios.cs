@@ -67,7 +67,7 @@ public class ModuloEventosAleatorios : MonoBehaviour
                 evento, 
                 new System.Action[]
             {
-                () => resolverDecisao(evento, true),
+                () => ResolverDecisao(evento, true),
                 () => ResolverDecisao(evento, false)
             },
             new string[] { evento.opcao1, evento.opcao2});
@@ -76,7 +76,7 @@ public class ModuloEventosAleatorios : MonoBehaviour
         {
             popupPendente= modulointerface.GerarEventosPopUp(
                 evento, 
-                new System.Action[] { () => ResolverDecisao(ModuloEventosAleatorios, true) },
+                new System.Action[] { () => ResolverDecisao(evento, true) },
                 new string[] { evento.opcao1 });
         }
     }
@@ -185,7 +185,7 @@ public class ModuloEventosAleatorios : MonoBehaviour
             return false;
         }
 
-        var originais = Resources.LoadAll<eventosAtivos>("ScriptableObjects/Eventos");
+        var originais = Resources.LoadAll<Eventos>("ScriptableObjects/Eventos");
         var porId = new Dictionary<int, Eventos>();
 
         foreach (var original in originais)
@@ -197,5 +197,59 @@ public class ModuloEventosAleatorios : MonoBehaviour
             }
             porId.Add(original.id, original);
         }
+        registros= registros ?? new List<EventoSalvo>();
+
+        if(registros.Count > 5)
+        {
+            Debug.LogError("O save possui mais de 6 eventos ativos");
+            return false;
+        }
+
+        var idsSalvos = new HashSet<int>();
+
+        foreach (var registro in registros)
+        {
+            if(registro == null)
+            {
+                Debug.LogError("Registro inválido");
+            }
+
+            if(!idsSalvos.Add(registro.id))
+            {
+                Debug.LogError("Evento repetido no save: " + registro.id);
+                return false;
+            }
+
+            if(!porId.TryGetValue(registro.id, out eventos original))
+            {
+                Debug.LogError("Eventos não econtrados: " + registro.id);
+                return false;
+            }
+
+            if(originial.tipo == TipoEvento.Instantaneo)
+            {
+                Debug.LogError("Evento salvo com duração inválida? " + registro.id);
+                return false;
+            }
+        }
+
+        var restaurados = new List<Eventos>();
+
+        foreach (var registro in registros)
+        {
+            Eventos copira = Instantiate(porId[registro.id]);
+
+            copira.duracao = registro.duracaoRestante;
+            copira.ativacao = true;
+
+            restaurados.Add(copia);   
+        }
+
+        LimparEventos();
+
+        eventosAtivos.AddRange(restaurados);
+        AttTiposAfetados();
+
+        return true;
     }
 }

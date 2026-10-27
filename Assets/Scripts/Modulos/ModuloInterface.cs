@@ -112,7 +112,7 @@ public class ModuloInterface : MonoBehaviour
 
     }
 
-    public void GerarEventosPopUp(Eventos evento, System.Action[] funcoes, string[] opcoes)
+    public PopUp GerarEventosPopUp(Eventos evento, System.Action[] funcoes, string[] opcoes)
     {
         PopUp popup = Instantiate(prefabPopUp, painelprincipal).GetComponent<PopUp>();
         AtualizarTxt(popup.nome, evento.nome,"");
