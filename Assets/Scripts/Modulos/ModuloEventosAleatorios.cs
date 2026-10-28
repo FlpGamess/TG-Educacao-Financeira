@@ -212,6 +212,7 @@ public class ModuloEventosAleatorios : MonoBehaviour
             if(registro == null)
             {
                 Debug.LogError("Registro inválido");
+                return false;
             }
 
             if(!idsSalvos.Add(registro.id))
@@ -220,13 +221,13 @@ public class ModuloEventosAleatorios : MonoBehaviour
                 return false;
             }
 
-            if(!porId.TryGetValue(registro.id, out eventos original))
+            if(!porId.TryGetValue(registro.id, out Eventos original))
             {
                 Debug.LogError("Eventos não econtrados: " + registro.id);
                 return false;
             }
 
-            if(originial.tipo == TipoEvento.Instantaneo)
+            if(original.tipo == TipoEvento.Instantaneo)
             {
                 Debug.LogError("Evento salvo com duração inválida? " + registro.id);
                 return false;
@@ -237,10 +238,10 @@ public class ModuloEventosAleatorios : MonoBehaviour
 
         foreach (var registro in registros)
         {
-            Eventos copira = Instantiate(porId[registro.id]);
+            Eventos copia = Instantiate(porId[registro.id]);
 
-            copira.duracao = registro.duracaoRestante;
-            copira.ativacao = true;
+            copia.duracao = registro.duracaoRestante;
+            copia.ativacao = true;
 
             restaurados.Add(copia);   
         }
