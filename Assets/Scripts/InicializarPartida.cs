@@ -22,6 +22,8 @@ public class InicializarPartida : MonoBehaviour
     public ModuloTempo moduloTempo;
     public Player player;
 
+    public ModuloEventosAleatorios moduloEventos;
+
     private IEnumerator Start()
     {
         yield return null;
@@ -30,6 +32,7 @@ public class InicializarPartida : MonoBehaviour
         ModuloTempo.mes = 1;
         ModuloTempo.inicioMes = true;
         ModuloTempo.fimMes= false;
+        moduloEventos.LimparEventos();
 
         player.IniciarPartidaNova();
         moduloDisposicao.IniciarPartidaNova();

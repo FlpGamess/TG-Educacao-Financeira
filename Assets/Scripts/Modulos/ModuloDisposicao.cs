@@ -58,6 +58,17 @@ public class ModuloDisposicao : MonoBehaviour
     //fun��o que calcula a disposi��o do personagem 
     //para adicionar use numero positivo e para remover negativos
 
+    public bool GastarDisposicao(int custo)
+    {
+        if  (disposicao - custo < -30)
+        {
+            return false;
+        }
+        CalcularDisposicao(-custo);
+        AlterarDisposicao();
+        return disposicao >= -30;
+    }
+
     public void DescontarDisposicao()
     {   //-40 trabalho
         Debug.Log($"Descontando disposi��o | Valor atual: {disposicao}");

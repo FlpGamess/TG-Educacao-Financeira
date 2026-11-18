@@ -172,7 +172,7 @@ public class Player : MonoBehaviour
 
     public void RegistrarGanhosAnteriores()
     {
-        HistoricoGanhos.Add(ModuloTempo.mes-1, GanhoAnterior);
+        HistoricoGanhos[ModuloTempo.mes-1] = GanhoAnterior;
     }
   
     public void AlterarSaldoConta()

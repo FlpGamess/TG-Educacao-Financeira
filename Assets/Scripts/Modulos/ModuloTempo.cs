@@ -61,8 +61,8 @@ public class ModuloTempo : MonoBehaviour
         Debug.Log($"AtualizarSemana chamada | Semana atual: {semana}");
         semana++;
         ModuloInterface.AtualizarTxt(semanav, "Semana", semana.ToString());
-        isSemanaAvancada?.Invoke();
         AtualizarMes();
+        isSemanaAvancada?.Invoke();
         moduloEventos.VerificarGatilho(GatilhoEvento.AvancarSemana);
     }
 

@@ -24,9 +24,9 @@ public class DadosInvestimento //Variaveis para a criação do banco
     public float mudanca = 0f; //usado para verificar a variação aleatoria
     public float taxaAd = 0f; // Taxa de administração cobrada no rendiemento usado pelos fundos
 }
-
 public class ModuloEconomia : MonoBehaviour
 {
+    public ModuloDisposicao moduloDisposicao;
     public List<DadosInvestimento> bancos;
     public Player player;
     public GameObject prefabItemInvestimento;
@@ -74,6 +74,7 @@ public class ModuloEconomia : MonoBehaviour
 
     void Start()
     {
+        if(moduloDisposicao == null) moduloDisposicao = FindFirstObjectByType<ModuloDisposicao>();
         ModuloTempo.isSemanaAvancada += RenderInvestimentos;
         ModuloTempo.isSemanaAvancada += AtualizarVisibilidadeBotao;
         ModuloTempo.isSemanaAvancada += TempoGravado;
@@ -109,7 +110,11 @@ public class ModuloEconomia : MonoBehaviour
         semanaLiberaInvest = ModuloTempo.semana;
     }
 
-    if  (player.patrimonio >= 100)
+    float totalInvs = 0f;
+    foreach (var banco in bancos)
+        totalInvs += banco.valorInvestido;
+
+    if  (player.patrimonio >= 100 || totalInvs > 0)
         valorTot = true;
     else
         valorTot = false;
@@ -118,11 +123,7 @@ public class ModuloEconomia : MonoBehaviour
         int semanaCheck = semanaLiberaInvest +4;
         if (ModuloTempo.semana >= semanaCheck && ModuloTempo.fimMes)
         {
-            float TotalInvs = 0f;
-            foreach (var banco in bancos)
-                TotalInvs += banco.valorInvestido;
-
-            if (valorTot && TotalInvs >= 100)
+            if (valorTot && totalInvs >= 100)
                 cartaoLib = true;
         }
     }
@@ -180,11 +181,18 @@ public class ModuloEconomia : MonoBehaviour
             Debug.Log("Saldo insuficiente!");
             return;
         }
+        if (moduloDisposicao != null && !moduloDisposicao.GastarDisposicao(5))
+        {
+            return;
+        } // Gastar 5 de disposição ao investir
+
+        if (banco.valorInvestido <= 0f || banco.semanaInvestimento < 0)
+        {
+            banco.semanaInvestimento = ModuloTempo.semana;
+        }
         player.patrimonio -= valor;
         banco.valorInvestido += valor;
         banco.valorOriginal += valor;
-        banco.semanaInvestimento = ModuloTempo.semana;
-
         player.AlterarSaldoConta();
         moduloEventosA.VerificarGatilho(GatilhoEvento.Investir);
         AtualizarUI();
@@ -218,14 +226,17 @@ public class ModuloEconomia : MonoBehaviour
             if (par.banco.tipo == TipoInvestimento.Poupanca && par.banco.valorInvestido > 0 && !PodeResgatar(par.banco))
             {
                 int semanaFaltando = 4 - (ModuloTempo.semana - par.banco.semanaInvestimento);
-                ModuloInterface.AtualizarTxt(textoDescricao, "", $"Resgatar agora perde o rendimento! Faltam {semanaFaltando} semana(s) para resgate sem perdas.");
+                ModuloInterface.AtualizarTxt(textoDescricao, "", $"Resgatar agora perde o rendimento (recebe R$ {par.banco.valorOriginal:F2})! Faltam {semanaFaltando} semana(s) para resgate sem perdas.");
                 textoDescricao.color = Color.yellow;
             }
 
             else if (par.banco.tipo == TipoInvestimento.CDB && par.banco.valorInvestido > 0)
             {
-                float aliquota = CalcularAliquotaIR(par.banco) * 100f;
-                ModuloInterface.AtualizarTxt(textoDescricao, "", $"Imposto de Renda atual sobre o lucro: {aliquota}%. Quanto mais tempo investido, menor o imposto.");
+                float aliquota = CalcularAliquotaIR(par.banco);
+                float lucro = Mathf.Max(par.banco.valorInvestido - par.banco.valorOriginal, 0f);
+                float imposto = lucro * aliquota;
+                float valorLiquido = par.banco.valorInvestido - imposto;
+                ModuloInterface.AtualizarTxt(textoDescricao, "", $" Se resgatar agora irá receber R$ {valorLiquido:F2} Liquido(IR: R$ {imposto:F2} a aliquota: {aliquota * 100f:F1}%). Quanto mais tempo investido, menor o imposto.");
                 textoDescricao.color = Color.yellow;
             }
 
@@ -281,13 +292,25 @@ public class ModuloEconomia : MonoBehaviour
         //vaiação pro cdb
         float variacao = Random.Range(-mudanca,mudanca);
         //fundo de rendimento
-        float taxaSemanal = Mathf.Max(taxaBase + variacao,0);
-        float valorRendido = valorInvestido * (1 + taxaSemanal);
+        float taxaSemanal;
+
+        if (nomeinvestimento == TipoInvestimento.Fundos.ToString())
+        {
+            taxaSemanal = taxaBase + variacao;
+        }
+        else
+        {
+            taxaSemanal = Mathf.Max(taxaBase + variacao, 0);
+        }
+        float rendimentoBruto = valorInvestido * taxaSemanal;
+        float valorFinal = valorInvestido + rendimentoBruto;
+
         if (taxaAd > 0)
         {
-            valorRendido  *= (1 - taxaAd);
+            float taxaAdSemanal = taxaAd / 4f; // Convertendo a taxa de administração mensal para semanal
+            valorFinal -= valorFinal * taxaAdSemanal;
         }
-        return valorRendido;
+        return Mathf.Max(valorFinal, 0);
     }
 
     public void Resgatar(DadosInvestimento banco, TMP_InputField inputResgate)
@@ -297,10 +320,15 @@ public class ModuloEconomia : MonoBehaviour
             Debug.Log("Digite um valor válido para resgatar.");
             return;
         }
-        if(valorResgatar > banco.valorInvestido) //impede resgate de valores maiores
+        if(valorResgatar > banco.valorInvestido +0.005f) //impede resgate de valores maiores
         {
             Debug.Log("Valor de resgate maior que o investido.");
             return;
+        }
+
+        if (valorResgatar > banco.valorInvestido)
+        {
+            valorResgatar = banco.valorInvestido;
         }
 
         float proporcao = valorResgatar / banco.valorInvestido; //calculo do valor resgatado em relação ao total
@@ -322,12 +350,19 @@ public class ModuloEconomia : MonoBehaviour
                 valorLiquido = valorResgatar - imposto;
             }
         }
-
         banco.valorInvestido -= valorResgatar;
         banco.valorOriginal -= principalRetirado;
 
-        player.patrimonio += valorLiquido;
+        if (banco.valorInvestido <= 0.01f)
+        {
+            banco.valorInvestido = 0f;
+            banco.valorOriginal = 0f;
+            banco.semanaInvestimento = -1;
+        }
 
+        player.patrimonio += valorLiquido;
+        inputResgate.text = "";
+        
         AtualizarUI();
         player.AlterarSaldoConta();
     }
@@ -340,7 +375,11 @@ public class ModuloEconomia : MonoBehaviour
 
     public void AtualizarDepoisDeRestaurar()
     {
-        valorTot = player.patrimonio >= 100;
+        float totalInvs = 0f;
+        foreach (var banco in bancos)
+            totalInvs += banco.valorInvestido;
+
+        valorTot = player.patrimonio >= 100 || totalInvs > 0;
         AtualizarVisibilidadeBotao();
 
         MontarLista();

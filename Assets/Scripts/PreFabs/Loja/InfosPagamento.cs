@@ -19,9 +19,9 @@ public class InfosPagamento : MonoBehaviour
     }
     public void SetInfosPagamento(string titulo,TipoPagamento op1, TipoPagamento op3)
     {
-        Opcao1.GetComponentInChildren<Text>().text = op1.ToString() + " - Paagamento é feito na hora";
+        Opcao1.GetComponentInChildren<Text>().text = op1.ToString() + " - Pagamento é feito na hora";
         // Opcao2.GetComponentInChildren<Text>().text = op2.ToString();
-        Opcao3.GetComponentInChildren<Text>().text = op3.ToString() + " - Valor será pago na primeira semana do mês e após 5x tem juros";
+        Opcao3.GetComponentInChildren<Text>().text = op3.ToString() + " - Valor será pago na primeira semana do mês e apartir de 4x tem juros";
         Titulo.text = titulo;
         
     }

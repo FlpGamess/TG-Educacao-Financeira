@@ -30,9 +30,6 @@ public class ModuloInterface : MonoBehaviour
     {
     //define menuCelular como o menu do MenuCelular sendo o menu padr�o
      menuCelular = Interface.transform.Find("MenuCelular").gameObject;
-
-         btnHistorico.onClick.AddListener(() => Debug.Log("OIA O BOTÃO"));
-
     }
 
     // Update is called once per frame
@@ -112,12 +109,12 @@ public class ModuloInterface : MonoBehaviour
 
     }
 
-    public void GerarEventosPopUp(Eventos evento, System.Action[] funcoes, string[] opcoes)
+    public PopUp GerarEventosPopUp(Eventos evento, System.Action[] funcoes, string[] opcoes)
     {
         PopUp popup = Instantiate(prefabPopUp, painelprincipal).GetComponent<PopUp>();
         AtualizarTxt(popup.nome, evento.nome,"");
         AtualizarTxt(popup.descricao, "descrição: ", evento.descricao);
-
+        bool escolhido =false;
         for (int i = 0; i < funcoes.Length; i++)
         {
             GameObject botao = Instantiate(prefabBotao, popup.btncontainer);
@@ -127,14 +124,18 @@ public class ModuloInterface : MonoBehaviour
 
             componenteBotao.onClick.AddListener(() =>
             {
+                if(escolhido) return;
+                escolhido = true;
+                foreach(var b in popup.btns) b.interactable = false;
                 funcao?.Invoke();
                 ReiniciarJanelas();
+                popup.gameObject.SetActive(false);
                 Destroy(popup.gameObject);
             });
             AtualizarTxt(botao.GetComponentInChildren<TextMeshProUGUI>(), "", opcoes[i]);
             popup.btns.Add(componenteBotao);
         }
-
+        return popup;
     }
 
     public void ReiniciarJanelas()
