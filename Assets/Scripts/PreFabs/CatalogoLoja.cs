@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class CatalogoLoja : MonoBehaviour
 {
@@ -30,11 +29,17 @@ public class CatalogoLoja : MonoBehaviour
         
     }
 
+    public void AtualizarApÃ³sEventos()
+    {
+        CarregarCatalogo(player.Bens);
+        PrecosAtualizados?.Invoke();
+    }
+
     public void CarregarCatalogo(List<ItensComprados> bens)
     {
         LimparListas();
 
-        //inicialização com o dicionario vazio
+        //inicializaï¿½ï¿½o com o dicionario vazio
         /*foreach(AtributosFinanceiros atbf in Enum.GetValues(typeof(AtributosFinanceiros))){
             catalogo.Add(atbf, new List<Itens>());
         }*/
@@ -62,6 +67,10 @@ public class CatalogoLoja : MonoBehaviour
     }
 
     public void LimparListas() {
+        foreach (Itens item in itens)
+        {
+            if (item != null) Destroy (item);
+        }
         itens.Clear();
 
         foreach (List<Itens> lista in catalogo.Values)

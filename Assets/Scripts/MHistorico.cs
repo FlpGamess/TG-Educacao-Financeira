@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 using XCharts.Runtime;
@@ -14,10 +15,42 @@ public class MHistorico : MonoBehaviour
     public BaseChart graficoGG;
     public LineChart graficoLP;
 
+    public ModuloEconomia moduloEconomia;
+
     public void CarregarHistorico()
     {
         LimparBlocos();
-        ModuloInterface.AtualizarTxt(patrimonio, "R$ ", player.patrimonio.ToString());
+        ModuloInterface.AtualizarTxt(patrimonio, "R$ ", player.patrimonio.ToString("F2"));
+
+        if (moduloEconomia == null) moduloEconomia = FindFirstObjectByType<ModuloEconomia>();
+
+        if(moduloEconomia != null && moduloEconomia.bancos != null)
+        {
+            foreach (var banco in moduloEconomia.bancos)
+            {
+                if (banco.valorInvestido > 0)
+                {
+                 PagamentoRealizadoBloco blocoInv = Instantiate(
+                    blocoHistoricoPreFab,
+                    historicoContainer); 
+
+                    ModuloInterface.AtualizarTxt(blocoInv.nome, "", $"Investimento em {banco.tipo}");
+                    ModuloInterface.AtualizarTxt(blocoInv.valor, "+ R$ ", banco.valorInvestido.ToString("F2"));
+                    ModuloInterface.AtualizarTxt(blocoInv.tipo, "", "Investimento");
+                    ModuloInterface.AtualizarTxt(blocoInv.pagamento, "", "Ativo");
+                    ModuloInterface.AtualizarTxt(blocoInv.semana, "", banco.semanaInvestimento >= 0 ? $"Sem. {banco.semanaInvestimento}" : "");
+                    ModuloInterface.AtualizarTxt(blocoInv.parcela, "", $"{banco.percentualCDI}% CDI");
+
+                    if (blocoInv.valor != null) blocoInv.valor.color = new Color32(46, 204, 113, 255);
+                    var fundo = blocoInv.GetComponent<UnityEngine.UI.Image>();
+                    if(fundo != null) fundo.color = new Color32(235,247,240,255);
+
+                    blocosCriados.Add(blocoInv);
+
+                }
+            }
+        }
+        
         player.HistoricoPagamentos.Sort((a, b) => b.semana.CompareTo(a.semana));
         foreach (PagamentoRealizado p in player.HistoricoPagamentos)
         {
@@ -34,13 +67,20 @@ public class MHistorico : MonoBehaviour
             
             blocosCriados.Add(bloco);
         }
+
+        Canvas.ForceUpdateCanvases();
+        var scrollRect = historicoContainer.GetComponentInParent<UnityEngine.UI.ScrollRect>();
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 1f;
+        }
         ManipularGraficoGG();
         ManipularLp();
     }
   
     public void ManipularGraficoGG()
     {
-        int mesFinal = ModuloTempo.mes - 1;
+        int mesFinal = Mathf.Max(1, ModuloTempo.mes - 1);
         int mesInicial = Mathf.Max(1, mesFinal - 2);
         List<int> meses = new List<int>();
 
@@ -65,7 +105,7 @@ public class MHistorico : MonoBehaviour
         for (int m = mesInicial; m <= mesFinal; m++)
         {
             meses.Add(m);
-            ganhostotais[m] = player.HistoricoGanhos.TryGetValue(m,out float valor) ? valor : 0f;
+            ganhostotais[m] = player.HistoricoGanhos.TryGetValue(m,out float valor) ? valor : (m == ModuloTempo.mes ? player.GanhoMensal : 0f);
         }
 
         modulointerface.CriarGraficoBarraStLinha(graficoGG,meses,gastostotal,ganhostotais,"Historico da Conta nos Ultimos 3 Meses");
@@ -74,14 +114,14 @@ public class MHistorico : MonoBehaviour
 
     public void ManipularLp()
     {
-        int mesFinal = ModuloTempo.mes - 1;
+        int mesFinal = Mathf.Max(1, ModuloTempo.mes - 1);
         int mesInicial = Mathf.Max(1, mesFinal - 2);
 
         Dictionary<int,float> saldoMensal = new Dictionary<int,float>();
 
         for (int m = mesInicial;m <= mesFinal; m++)
         {
-            float ganhos = player.HistoricoGanhos.TryGetValue(m, out float g) ? g:0f;
+            float ganhos = player.HistoricoGanhos.TryGetValue(m, out float g) ? g: (m == ModuloTempo.mes ? player.GanhoMensal :0f);
             float gastos = 0f;
             foreach (PagamentoRealizado pagamento in player.HistoricoPagamentos)
             {

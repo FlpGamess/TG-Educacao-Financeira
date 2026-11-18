@@ -92,18 +92,15 @@ public class ModuloEventosAleatorios : MonoBehaviour
     {
         Eventos novoEvento = Instantiate(evento);
         novoEvento.ativacao = true;
-            eventosAtivos.Add(novoEvento);
-
-        AttTiposAfetados();
-
+            
         if(novoEvento.tipo == TipoEvento.Instantaneo)
         {
             player.PatrimonioEventos(novoEvento);
-            catalogoloja.ItensEventos(novoEvento);
-
-            eventosAtivos.Remove(novoEvento);
-            AttTiposAfetados();
+            Destroy(novoEvento);
+            return;
         }
+        eventosAtivos.Add(novoEvento);
+        AttTiposAfetados();
     }
 
     public float ExecutarEventos(TipoAfetado tipo,float valor, IEnumerable<Eventos> eventos, string nomeAfetado = null)
@@ -139,19 +136,26 @@ public class ModuloEventosAleatorios : MonoBehaviour
 
     public void VencimentoEventos()
     {
-        foreach(Eventos evento in eventosAtivos.ToList())
+        bool removeu = false;
+
+        for(int i = eventosAtivos.Count - 1; i>=0; i--)
         {
+            Eventos evento = eventosAtivos[i];
             if(evento.tipo == TipoEvento.Persistente)
             {
                 continue;
             }
             evento.duracao--;
-            if(evento.duracao < 0)
+            if(evento.duracao <= 0)
             {
-                eventosAtivos.Remove(evento);
+                eventosAtivos.RemoveAt(i);
+                Destroy(evento);
+                removeu = true;
             }
         }
         AttTiposAfetados();
+        if(removeu)
+            ReiniciarInterface();
     }
 
     private void AttTiposAfetados()
@@ -252,5 +256,10 @@ public class ModuloEventosAleatorios : MonoBehaviour
         AttTiposAfetados();
 
         return true;
+    }
+    public void ReiniciarInterface()
+    {
+        catalogoloja.AtualizarApósEventos();
+        modulointerface.ReiniciarJanelas();
     }
 }

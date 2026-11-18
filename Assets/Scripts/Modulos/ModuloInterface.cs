@@ -30,9 +30,6 @@ public class ModuloInterface : MonoBehaviour
     {
     //define menuCelular como o menu do MenuCelular sendo o menu padr�o
      menuCelular = Interface.transform.Find("MenuCelular").gameObject;
-
-         btnHistorico.onClick.AddListener(() => Debug.Log("OIA O BOTÃO"));
-
     }
 
     // Update is called once per frame

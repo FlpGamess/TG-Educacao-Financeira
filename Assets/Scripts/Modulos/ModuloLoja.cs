@@ -10,7 +10,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using XCharts.Runtime;
 using static System.Net.Mime.MediaTypeNames;
-using static UnityEditor.PlayerSettings;
+
 //classe da loja do jogo
 public class ModuloLoja : MonoBehaviour
 {   [Header("Paginas")]
@@ -149,15 +149,15 @@ public class ModuloLoja : MonoBehaviour
 
         ModuloInterface.AtualizarTxt(infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Titulo,"", "Nome");
         ModuloInterface.AtualizarTxt(infog.Container1.GetChild(0).GetComponent<CelulaCompra>().Informacao,"", itemSelecionado.Nome);
-        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Titulo,"", "Pre�o");
-        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Informacao,"R$", itemSelecionado.Preco.ToString());
+        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Titulo,"", "Preco");
+        ModuloInterface.AtualizarTxt(infog.Container1.GetChild(1).GetComponent<CelulaCompra>().Informacao,"R$", itemSelecionado.Preco.ToString("F2"));
 
         ModuloInterface.AtualizarTxt(infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Titulo, "", "Tipo");
         ModuloInterface.AtualizarTxt(infog.Container2.GetChild(0).GetComponent<CelulaCompra>().Informacao, "", itemSelecionado.Tipo);
         ModuloInterface.AtualizarTxt(infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Titulo, "", "Categoria");
-        ModuloInterface.AtualizarTxt(infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Informacao, "R$", itemSelecionado.Categoria.ToString());
+        ModuloInterface.AtualizarTxt(infog.Container2.GetChild(1).GetComponent<CelulaCompra>().Informacao, "", itemSelecionado.Categoria.ToString());
 
-        ModuloInterface.AtualizarTxt(infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo, "", "Descri��o");
+        ModuloInterface.AtualizarTxt(infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Titulo, "", "Descricao");
         ModuloInterface.AtualizarTxt(infog.Container3.GetChild(0).GetComponent<CelulaCompra>().Informacao, "", itemSelecionado.Descricao);
 
         InfoPag.SetInfosPagamento("Tipo de Pagamento", TipoPagamento.Pix, TipoPagamento.Cartão_Credito);
@@ -256,6 +256,18 @@ public class ModuloLoja : MonoBehaviour
     }
 
     public void Comprar(Itens compra) {
+        TipoPagamento tipopg = InfoPag.OpcaoMarcada();
+        if (tipopg != TipoPagamento.Cartão_Credito && player.patrimonio < compra.Preco)
+        {
+            Debug.Log("Saldo insuficiente");
+            return;
+        }
+        {
+            if (!disposicao.GastarDisposicao(10))
+            {
+                return;
+            }
+        }
         MenuCompraItem container = menuCompraItem.GetComponent<MenuCompraItem>();
         Despesas despesa = GerarDespesas(compra);
 
@@ -397,7 +409,7 @@ public class ModuloLoja : MonoBehaviour
                 {"Rendimentos", rendimentos }
             };
         container.saldoConta = AtualizarPlayerInfos(container.saldoConta, 0);
-        moduloInterface.CriarGraficoLinhaSimples(graficoLinhaSimples,series, "Simula��o de suas Finan�as Caso Compre o Item Desejado ao Longo das Parcelas");
+        moduloInterface.CriarGraficoLinhaSimples(graficoLinhaSimples,series, "Simulacao de suas Financas Caso Compre o Item Desejado ao Longo das Parcelas");
         HelperConfig.ConfigurarBtn(container.btnComprar,"Comprar", () => BtnComprarSim());
 
 
@@ -418,7 +430,7 @@ public class ModuloLoja : MonoBehaviour
         switch (modo)
         {
             case 0:
-                ModuloInterface.AtualizarTxt(info, "$", player.patrimonio.ToString());
+                ModuloInterface.AtualizarTxt(info, "R$", player.patrimonio.ToString("F2"));
                 break;
                 case 1:
                 ModuloInterface.AtualizarTxt(info, disposicao.disposicao.ToString(), "%");
@@ -430,7 +442,7 @@ public class ModuloLoja : MonoBehaviour
 
     public MenuCompraItem AtualizarPlayerInfosIC(MenuCompraItem container)
     {
-        ModuloInterface.AtualizarTxt(container.saldoConta, "$", player.patrimonio.ToString());
+        ModuloInterface.AtualizarTxt(container.saldoConta, "R$", player.patrimonio.ToString("F2"));
         ModuloInterface.AtualizarTxt(container.saldoDisposicao, disposicao.disposicao.ToString(), "%");
         return container;
     }

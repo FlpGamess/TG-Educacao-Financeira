@@ -281,6 +281,7 @@ public bool CarregarJogo(Player player, ModuloDisposicao moduloDisposicao, Modul
         moduloDisposicao.AlterarDisposicao();
         ModuloInterface.AtualizarTxt(player.moduloTempo.semanav, "Semana", save.semana.ToString());
         moduloEconomia.AtualizarDepoisDeRestaurar();
+        moduloEventos.ReiniciarInterface();
 
         if (historicoBens != null && historicoBens.gameObject.activeInHierarchy)
             historicoBens.AbrirHistorico();

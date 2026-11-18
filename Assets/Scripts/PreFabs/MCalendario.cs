@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,10 +21,14 @@ public class MCalendario : MonoBehaviour
     public Player player;
     public int mesCalendario;
 
+    public ModuloEconomia moduloEconomia;
+
     public void CarregarMCalendario()
     {
+
+        if(moduloEconomia == null) moduloEconomia = FindFirstObjectByType<ModuloEconomia>();
         mesCalendario = ModuloTempo.mes;
-        ModuloInterface.AtualizarTxt(mes, "Mês", mesCalendario.ToString());
+        ModuloInterface.AtualizarTxt(mes, "Mes", mesCalendario.ToString());
         CarregarSemanasCalendario();
         CarregarIndicadores();
 
@@ -36,7 +41,7 @@ public class MCalendario : MonoBehaviour
         {
             mesCalendario = ModuloTempo.mes;
         }
-        ModuloInterface.AtualizarTxt(mes, "Mês", mesCalendario.ToString());
+        ModuloInterface.AtualizarTxt(mes, "Mes", mesCalendario.ToString());
         CarregarSemanasCalendario();
        
     }
@@ -67,6 +72,14 @@ public class MCalendario : MonoBehaviour
     {
 
         for (int i = 0; i < semanas.Length; i++) {
+            if( i == 0 && player.moduloRendimentos != null)
+            {
+                BlocoCalendario blocoSalario = Instantiate(blocoprefab, blocossemanas[i]);
+                ModuloInterface.AtualizarTxt(blocoSalario.nome, "", "Salario");
+                ModuloInterface.AtualizarTxt(blocoSalario.valor, "R$ ", player.moduloRendimentos.salario.ToString("F2"));
+                blocoSalario.fundo.color = new Color32(250, 255, 255, 255);
+                blocosCriados.Add(blocoSalario);
+            }
             List<ParcelaCalendario> parcelas = player.FiltrarParcelasSemana(semanas[i]);
 
             foreach (ParcelaCalendario parcela in parcelas) {
@@ -74,10 +87,35 @@ public class MCalendario : MonoBehaviour
                 RectTransform blocoRect = bloco.GetComponent<RectTransform>();
                 RectTransform imagemRect = bloco.fundo.GetComponent<RectTransform>();
                 ModuloInterface.AtualizarTxt(bloco.nome, "", parcela.nome);
-                ModuloInterface.AtualizarTxt(bloco.valor, "", parcela.valor.ToString("F2"));
+                ModuloInterface.AtualizarTxt(bloco.valor, "R$ ", parcela.valor.ToString("F2"));
                 bloco.fundo.color = ModuloInterface.CoresAtributosFinanceiros(parcela.categoria);
                 blocosCriados.Add(bloco);
 
+            }
+
+            float rendimentoTotalEstimado = 0f;
+            if (moduloEconomia != null && moduloEconomia.bancos != null)
+            {   
+                foreach (var banco in moduloEconomia.bancos)
+                {
+                    if(player.moduloRendimentos != null)
+                    {
+                    if (banco.valorInvestido > 0)
+                    {
+                        float taxaBase = (banco.percentualCDI/ 100f) * player.moduloRendimentos.cdiSemanal;
+                        rendimentoTotalEstimado += banco.valorInvestido * taxaBase;
+                    }
+                    }
+                }
+            }
+
+            if (rendimentoTotalEstimado > 0.05f)
+            {
+                BlocoCalendario blocoRendimento = Instantiate(blocoprefab, blocossemanas[i]);
+                ModuloInterface.AtualizarTxt(blocoRendimento.nome, "", "Rendimentos");
+                ModuloInterface.AtualizarTxt(blocoRendimento.valor, "R$ ", rendimentoTotalEstimado.ToString("F2"));
+                blocoRendimento.fundo.color = new Color32(120, 220, 120, 255);
+                blocosCriados.Add(blocoRendimento);
             }
 
         }
@@ -91,7 +129,7 @@ public class MCalendario : MonoBehaviour
         {
             BlocoCalendario celula = Instantiate(blocoprefab, indicadores);
             ModuloInterface.AtualizarTxt(celula.nome, "", atb.ToString());
-            ModuloInterface.AtualizarTxt(celula.valor,"R$ ",Player.AtbFinanceiros[atb].ToString());
+            ModuloInterface.AtualizarTxt(celula.valor,"R$ ",Player.AtbFinanceiros[atb].ToString("F2"));
             celula.fundo.color = ModuloInterface.CoresAtributosFinanceiros(atb);
             ModuloInterface.DefinirTamanhoMinimo(celula.GetComponent<LayoutElement>(), 100f, 50f);
 

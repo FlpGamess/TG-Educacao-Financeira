@@ -57,9 +57,9 @@ public class Despesas
             for (int i = 0; i < parcela; i++)
             {
                 tparcelado += vparcelado;
-                if(parcela-i ==1 && compra > tparcelado)
+                if(parcela-i ==1 && total > tparcelado)
                 {
-                    vparcelado = vparcelado + (compra - tparcelado);
+                    vparcelado = vparcelado + (total - tparcelado);
                 }
                 Parcela p = new Parcela(vparcelado, semana,i+1);
                 parcelas.Add(p);
